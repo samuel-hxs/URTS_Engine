@@ -1,0 +1,15 @@
+uniform mat4 u_projView;
+uniform mat4 u_offMat;
+
+attribute vec4 Color;
+attribute vec2 TexCoord;
+attribute vec3 Position;
+
+varying vec4 vColor;
+varying vec2 vTexCoord; 
+
+void main() {
+	vColor = Color;
+	vTexCoord = TexCoord;
+	gl_Position = u_projView * u_offMat * vec4(Position, 1.0);
+}

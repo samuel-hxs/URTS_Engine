@@ -1,0 +1,29 @@
+uniform sampler2D u_texture;
+uniform vec4 u_fow_color;
+
+uniform float u_mode;
+uniform float u_random;
+
+varying vec2 vTexCoord;
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.232) + u_random)) * 43658.54531);
+}
+
+void main() {
+	if(u_mode<0.1){
+		gl_FragColor = u_fow_color;
+		return;
+	}
+
+	if(sqrt(vTexCoord.x*vTexCoord.x+vTexCoord.y*vTexCoord.y) > 1)
+		discard;
+	
+	if(u_mode>0.99){
+		gl_FragColor = texture2D(u_texture, vTexCoord)*0.012;
+		return;
+	}
+	gl_FragColor = u_fow_color;
+	gl_FragColor.w = rand(vTexCoord);
+	
+}

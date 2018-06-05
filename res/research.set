@@ -1,0 +1,68 @@
+Class: 0 {
+	Color = 255, 10, 10;
+	Offset = 10;
+}
+Res: 1 {
+	P = 1000;
+	IconPos = 2, 15;
+	Tier = 1;
+	Class = 0;
+	LinesFront = 1-15, 0-15, 2-15;
+	Lines = 7-15, 8-15;
+}
+Res: 13 {
+	P = 1000;
+	IconPos = 8, 15;
+	Tier = 1;
+	Class = 0;
+	Needs = 1;
+}
+Res: 2 {
+	P = 1000;
+	IconPos = 17, 15;
+	Tier = 2;
+	Class = 0;
+	Lines = 22-15, 23-15, 24-15, 25-15, 26-15, 27-15, 28-15, 29-15, 24-16;
+	LinesFront = 13-15, 14-15, 15-15, 16-15, 17-15;
+	Needs = 13;
+}
+Res: 3 {
+	P = 1000;
+	IconPos = 17, 19;
+	Tier = 2;
+	Class = 0;
+	Lines = 22-19, 23-19, 24-19, 25-19, 26-19, 27-19, 28-19, 29-19, 24-18,
+	30-19, 31-19, 32-19, 33-19, 34-19, 35-19, 36-19, 37-19, 38-19;
+	LinesFront = 16-16, 16-17, 16-18, 16-19, 17-19;
+	Needs = 13;
+}
+Res: 14 {
+	P = 1000;
+	IconPos = 23, 17;
+	Tier = 2;
+	Class = 0;
+	Needs = 3, 2;
+	NeedsOR;
+}
+Res: 20 {
+	P = 1000;
+	IconPos = 29, 15;
+	Tier = 2;
+	Class = 0;
+	Needs = 2;
+	Lines = 32-15, 33-15, 34-15, 35-15, 36-15, 37-15, 38-15;
+}
+Res: 9 {
+	P = 1000;
+	IconPos = 38, 15;
+	Tier = 3;
+	Class = 0;
+	Needs = 20;
+}
+Res: 4 {
+	P = 1000;
+	IconPos = 38, 19;
+	Tier = 3;
+	Class = 0;
+	Needs = 3;
+}

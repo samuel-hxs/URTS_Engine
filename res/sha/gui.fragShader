@@ -1,0 +1,47 @@
+
+uniform sampler2D u_texture;
+uniform int u_mode;
+
+varying vec4 vColor;
+varying vec2 vTexCoord;
+
+void main() {
+	if(u_mode == 0){
+		vec4 texColor = texture2D(u_texture, vTexCoord);
+		gl_FragColor = vColor * texColor;
+	}else{
+		vec4 texColor = texture2D(u_texture, vTexCoord);
+		if(texColor.x == texColor.z && texColor.x == texColor.y){
+			if(vColor.x>1){
+				gl_FragColor.x = (1-texColor.x)/2+0.5;
+				gl_FragColor.y = (1-texColor.y)/2+0.5;
+				gl_FragColor.z = (1-texColor.z)/2+0.5;
+				gl_FragColor.w = texColor.w;
+			}else{
+				gl_FragColor = texColor;
+			}
+		}else if(texColor.x == texColor.z && texColor.y == 0){
+			if(vColor.x>1){
+				float q = vColor.x - 1;
+				
+				if(texColor.x >= 0.9){
+					gl_FragColor = vColor*texColor.x;
+					gl_FragColor.x = q * texColor.x;
+					gl_FragColor.w = texColor.w;
+				}else{
+					gl_FragColor = vColor*(1+texColor.x);
+					gl_FragColor.x = q*(1+texColor.x);
+					//if(gl_FragColor.x > 1)gl_FragColor.x = 1;
+					//if(gl_FragColor.y > 1)gl_FragColor.y = 1;
+					//if(gl_FragColor.z > 1)gl_FragColor.z = 1;
+					gl_FragColor.w = texColor.w;
+				}
+			}else{
+				gl_FragColor = vColor*texColor.x + vColor * vColor.w;
+				gl_FragColor.w = texColor.w;			
+			}
+		}else{
+			gl_FragColor = texColor;
+		}
+	}
+}

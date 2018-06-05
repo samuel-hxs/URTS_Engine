@@ -1,0 +1,21 @@
+uniform mat4 u_projView;
+uniform mat4 u_offMat;
+uniform vec3 u_posChange;
+
+attribute vec3 Position;
+attribute vec3 TextureC;
+attribute vec2 Tex_Pos;
+attribute vec3 Normal;
+
+varying vec2 vTexCoord; 
+varying vec3 vNormal;
+varying vec3 vTexture;
+varying vec4 vPos;
+
+void main() {
+	vNormal = normalize(u_offMat * vec4(Normal, 0.0)).xyz;
+	vPos = u_offMat * vec4(Position, 1.0);
+	vTexCoord = Tex_Pos;
+	vTexture = TextureC;
+	gl_Position = u_projView * vPos;
+}
