@@ -88,6 +88,8 @@ public class SpriteBatch {
 	private int height;
 	private int width;
 	
+	private float scale = 1;
+	
 	public static ShaderProgram getDefaultShader() throws Exception {
 		return defaultShader == null ? (defaultShader = new ShaderProgram("res/sha/gui", 
 				ATTRIBUTES)) : defaultShader;
@@ -325,6 +327,13 @@ public class SpriteBatch {
 			float u, float v,
 			float u2, float v2) {
 		checkFlush(tex);
+		
+		if(scale != 1){
+			x*=scale;
+			y*=scale;
+			width *= scale;
+			height *= scale;
+		}
 
 		float x1,y1, x2,y2, x3,y3, x4,y4;
 		
@@ -508,5 +517,9 @@ public class SpriteBatch {
 	
 	public int getHeight() {
 		return height;
+	}
+	
+	public void setScale(float scale) {
+		this.scale = scale;
 	}
 }

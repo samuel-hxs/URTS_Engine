@@ -37,6 +37,8 @@ public class FogOfWar {
 	private VertexArray buffer;
 	private Texture tex;
 	
+	public static boolean renderFogOfWar = true;
+	
 	public FogOfWar() throws Exception{
 		fowShader = new ShaderProgram("res/sha/fow", ATTRIBUTES);
 		buffer = new VertexArray(6000, ATTRIBUTES);
@@ -44,6 +46,8 @@ public class FogOfWar {
 	}
 	
 	public void renderFOW(Render3D r3d, CollisionFreeEntityIterator c){
+		if(!renderFogOfWar)
+			return;
 		r3d.setShader(fowShader, false);
 		fowShader.setUniformf(U_RANDOM, (float)Math.random());
 		r3d.updateProjectionView();
@@ -75,7 +79,7 @@ public class FogOfWar {
 			buffer.setCount(0);
 		}
 		
-		drawArea(0, 0, (0.5f*main.GameControle.getMapSize())*0.11f, ZERO_PLAIN-6);
+		drawArea(0, 0, (0.5f*main.GameControle.getMapSize())*1.1f, ZERO_PLAIN-6);
 		
 		GL11.glDisable(GL11.GL_ALPHA_TEST);
 		fowShader.setUniformf(U_MODE, 0);

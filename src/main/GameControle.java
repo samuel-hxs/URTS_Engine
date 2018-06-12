@@ -40,6 +40,9 @@ public class GameControle implements Runnable{
 	
 	private AreaControle area;
 	
+	private debug.PerformanceMonitor performanceS;
+	private debug.PerformanceMonitor performanceC;
+	
 	private static int mapSize = 200;
 	
 	public GameControle() throws Exception{
@@ -60,6 +63,8 @@ public class GameControle implements Runnable{
 		GL11.glClearColor(0.0f,  0.0f, 0.2f, 1);
 		GL11.glClearDepth(1.0f);
 		
+		PicLoader.pic = new PicLoader("res/ima/gui/gui");
+		
 		entitys = new EntityControle();
 		
 		area = new AreaControle();
@@ -72,10 +77,14 @@ public class GameControle implements Runnable{
 		Mouse.create();
 		Mouse.setGrabbed(true);
 		
-		PicLoader.pic = new PicLoader("res/ima/gui/gui");
-		
 		gui = new GuiControle();
 		hli = new HigherLevelInput(input, cameraHandler);
+		
+		performanceS = new debug.PerformanceMonitor("Main Loop");
+		performanceC = new debug.PerformanceMonitor("Main Loop");
+		
+		debug.Debug.z_setShutdownDebug(performanceS, performanceC);
+		render3d.setPerformance(performanceC);
 		
 		////////////TEST
 		gui.addMenu(new editor.MeshEditor());
@@ -90,6 +99,8 @@ public class GameControle implements Runnable{
 	@Override
 	public void run() {
 		while(!input.escPressed){
+			performanceS.start();
+			performanceC.start();
 			timePassed = (int)(System.currentTimeMillis()-lastTime);
 			lastTime = System.currentTimeMillis();
 			
@@ -102,6 +113,8 @@ public class GameControle implements Runnable{
 			
 			input.loop();
 			gui.update(input, hli);
+			performanceS.mark("GUI-Update");
+			performanceC.mark("GUI-Update");
 			
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 			GL11.glLoadIdentity();
@@ -123,6 +136,7 @@ public class GameControle implements Runnable{
 			
 			cameraHandler.sync();
 			render3d.render3D();
+			performanceS.mark("Render 3D");
 			
 			spriteBatch.setShader(null);
 			gui.draw(spriteBatch);
@@ -131,17 +145,30 @@ public class GameControle implements Runnable{
 			hli.paint(spriteBatch);
 			String fps = "FPS "+Timing.getFps()[1];
 			if(fps.length()>8)fps = fps.substring(0,8);
-			font14.render(spriteBatch, fps+" V:"+debug.FrameStatistics.drawMesh+
-					" E:"+debug.FrameStatistics.entitysPainted+" F:"+debug.FrameStatistics.entityFOW, 3, 14);
+			
+			if(Settings.debugOnScreenZoom)spriteBatch.setScale(2);
 			if(Settings.debugOnScreen){
+				font14.render(spriteBatch, fps+" L:"+debug.FrameStatistics.drawMesh+
+						" E:"+debug.FrameStatistics.entitysPainted+" F:"+debug.FrameStatistics.entityFOW, 3, 14);
 				font14.render(spriteBatch, "RAM: "+generateRAM(), 3, 24);
 				font14.render(spriteBatch, "Entity-Threads: "+EntityThreadTimer.t, 3, 34);
 				font14.render(spriteBatch, "LTU: "+EntityTickUpdate.lastTime()+"ms", 3, 44);
+				if(Settings.debugComplex)
+					performanceC.draw(3, 64, spriteBatch, font14);
+				else
+					performanceS.draw(3, 64, spriteBatch, font14);
+			}else{
+				font14.render(spriteBatch, fps, 3, 14);
 			}
+			spriteBatch.setScale(1);
 			spriteBatch.end();
 			debug.Timing.markFpsTh(System.nanoTime()-t);
+			performanceS.mark("Render All");
+			performanceC.mark("R. Gui");
 			
 			Display.update();
+			performanceS.mark("Display");
+			performanceC.mark("Display");
 			
 			Display.sync(60);//TODO FPS
 			debug.Timing.markFps(System.nanoTime()-t);

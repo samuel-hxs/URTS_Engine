@@ -8,12 +8,14 @@ import java.io.PrintWriter;
 import term.TermColors;
 import term.TermPrint;
 
-public class LogSaver implements TermPrint{
+public class LogSaver extends Thread implements TermPrint{
 
 	public final String logFilepath;
 	private long lastTime;
 	
 	public static final boolean singleLog = false;
+	
+	private static final String DIVIDER = "-------------------------------------------";
 	
 	public LogSaver(){
 		if(singleLog){
@@ -31,7 +33,7 @@ public class LogSaver implements TermPrint{
 			writer = new PrintWriter(new FileWriter(logFilepath)); 
 			writer.println("This is the Log of all Console Data: "+
 					new java.text.SimpleDateFormat("dd.MM.yy").format(new java.util.Date (System.currentTimeMillis())));
-			writer.println("-------------------------------------------");
+			writer.println(DIVIDER);
 		} catch (IOException ioe) { 
 			ioe.printStackTrace(); 
 		} finally { 
@@ -40,6 +42,8 @@ public class LogSaver implements TermPrint{
 				writer.close(); 
 			} 
 		}
+		
+		Runtime.getRuntime().addShutdownHook(this);
 	}
 
 	@Override
@@ -49,7 +53,7 @@ public class LogSaver implements TermPrint{
 
 	@Override
 	public void println(String s) {
-		println(s, 0);
+		println(s, TermColors.TEXT);
 	}
 
 	@Override
@@ -102,6 +106,21 @@ public class LogSaver implements TermPrint{
 		}
 	}
 	
+	public void logError(Exception e){
+		PrintWriter writer = null; 
+		try { 
+			writer = new PrintWriter(new FileWriter(logFilepath, true)); 
+			e.printStackTrace(writer);
+		} catch (IOException ioe) { 
+			ioe.printStackTrace(); 
+		} finally { 
+			if (writer != null){ 
+				writer.flush(); 
+				writer.close(); 
+			} 
+		}
+	}
+	
 	private static String getPreString(int i){
 		switch(i){
 		case TermColors.ERROR: return "[ER]";
@@ -124,5 +143,44 @@ public class LogSaver implements TermPrint{
 		case TermColors.REMOTE: return"[re]";
 		}
 		return "[??]";
+	}
+	
+	private PerformanceMonitor p1, p2;
+	
+	public void setShutdownData(PerformanceMonitor p1, PerformanceMonitor p2){
+		this.p1 = p1;
+		this.p2 = p2;
+	}
+	
+	@Override
+	public void run() {
+		PrintWriter writer = null; 
+		try { 
+			writer = new PrintWriter(new FileWriter(logFilepath, true));
+			
+			writer.println("");
+			writer.println("");
+			writer.println("Shutdown!");
+			writer.println(DIVIDER);
+			writer.println("");
+			
+			writer.println("");
+			writer.println("------Operation-Time: Simpel");
+			if(p1 != null){
+				p1.print(writer);
+			}
+			writer.println("");
+			writer.println("------Operation-Time: Complex");
+			if(p2 != null){
+				p2.print(writer);
+			}
+		} catch (IOException ioe) { 
+			ioe.printStackTrace(); 
+		} finally { 
+			if (writer != null){ 
+				writer.flush(); 
+				writer.close(); 
+			} 
+		}
 	}
 }

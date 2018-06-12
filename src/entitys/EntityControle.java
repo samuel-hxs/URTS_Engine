@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 /**
  * Will hold the Entity lists, will also control the sync between the Update-Thread,
@@ -37,8 +38,10 @@ public class EntityControle{
 		ept = new EntityProjectionThread();
 		
 		new EntityTickUpdate(this);
-		
-		for (int i = 0; i < 300; i++) {
+	}
+	
+	public void test(){
+		for (int i = 0; i < 60; i++) {
 			list.add(new EntityList());
 		}
 	}
@@ -153,7 +156,7 @@ public class EntityControle{
 	 * Will check Frustum-Intersection and active render distance.<br> 
 	 * IMPORTANT: must be given the active Projection-View-Matrix to work correctly
 	 */
-	public void startFrustum(Matrix4f proj, Matrix4f camera){
+	public void startFrustum(Matrix4f proj, Matrix4f camera, Vector3f pos){
 		/*
 		 * Only can use Blocks cleared by the Updater-Thread
 		 */
@@ -167,7 +170,7 @@ public class EntityControle{
 			protected boolean canUseNext(int pos) {
 				return pos < getBlUpdated();
 			}
-		}, proj, camera);
+		}, proj, camera, pos);
 	}
 	
 	/**

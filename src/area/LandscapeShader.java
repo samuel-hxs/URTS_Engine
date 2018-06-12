@@ -4,11 +4,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import main.grphics.Render3D;
 import mdesl.graphics.glutils.ShaderProgram;
 import mdesl.graphics.glutils.VertexAttrib;
+import mdesl.graphics.glutils.VertexData;
 
+/**
+ * Handles the Landscape-Shader-Programm, use this shader for Landscape and Unit-Drawing
+ * @author Sven T. Schneider
+ */
 public class LandscapeShader {
 
 	public static final String ATTR_POSITION = "Position";
@@ -60,13 +66,13 @@ public class LandscapeShader {
 		
 		shader.setUniformf(U_CAMERA_POS, r3d.getCamera().pos.x, r3d.getCamera().pos.y, r3d.getCamera().pos.z);
 		
-		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_INTENSITY, 0.21f);
+		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_INTENSITY, 0.51f);
 		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_COLOR, 1, 1, 1);
 		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_POS, 0, 0, 30);
 		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_REFLECTANCE, 1f);
 		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_REFLECTANCE, 1f);
 		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_SPECULAR_POWER, 1.1f);
-		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_SPECULAR_COLOR, 1, 1, 1);
+		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_SPECULAR_COLOR, 0, 0, 1);
 		
 		shader.setUniformf(U_SKY_LIGHT_DIR, 0, 0, 1);
 		shader.setUniformf(U_SKY_LIGHT_INTENSITY, 1.1f);
@@ -76,4 +82,49 @@ public class LandscapeShader {
 	public ShaderProgram getShader() {
 		return shader;
 	}
+	
+	public static void drawPlane(Vector3f[] e, float[] u, float[] v, VertexData d){
+		r.zero();
+		getNormal(r, e);
+		Vector3f bu = e[0];
+		e[0] = e[3];
+		r.mul(-1);
+		getNormal(r, e);
+		//r.mul(-1);
+		e[3] = e[0];
+		e[0] = bu;
+		
+		r.normalize();
+		
+		vertexPoint(0, e, r, u, v, d);
+		vertexPoint(1, e, r, u, v, d);
+		vertexPoint(2, e, r, u, v, d);
+		
+		vertexPoint(1, e, r, u, v, d);
+		vertexPoint(3, e, r, u, v, d);
+		vertexPoint(2, e, r, u, v, d);
+	}
+	
+	private static void vertexPoint(int p, Vector3f[] e, Vector3f normal, float[] u, float[] v, VertexData data){
+		data.put(e[p].x).put(e[p].y).put(e[p].z).put(1).put(1).put(1)
+			.put(u[p]).put(v[p]).put(normal.x).put(normal.y).put(normal.z);
+		data.countIncr();
+	}
+	
+	private static Vector3f v = new Vector3f();
+	private static Vector3f u = new Vector3f();
+	private static Vector3f r = new Vector3f();
+	public static Vector3f getNormal(Vector3f res, Vector3f[] edges){
+		u.set(edges[1]);
+		u.sub(edges[0]);
+		v.set(edges[2]);
+		v.sub(edges[0]);
+		
+		res.x += (u.y * v.z) - (u.z * v.y);
+		res.y += (u.z * v.x) - (u.x * v.z);
+		res.z += (u.x * v.y) - (u.y * v.x);
+		
+		return res;
+	}
+	
 }

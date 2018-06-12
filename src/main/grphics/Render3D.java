@@ -3,6 +3,7 @@ import org.lwjgl.opengl.GL11;
 
 import area.AreaControle;
 import area.AreaImages;
+import debug.PerformanceMonitor;
 import logic.CameraHandler;
 import main.PicLoader;
 import main.grphics.VertexDataManager.RenderingHints;
@@ -17,6 +18,7 @@ import org.joml.Vector3f;
 
 import entitys.EntityControle;
 import entitys.TacIconPainter;
+import entitys.paint.EntityPainter;
 
 public class Render3D extends SpriteBatch{
 
@@ -39,12 +41,19 @@ public class Render3D extends SpriteBatch{
 	private EntityControle entitys;
 	private TacIconPainter tacPainter;
 	
+	private EntityPainter entityPainter;
+	
+	private PerformanceMonitor performance;
+	
 	public Render3D(CameraHandler c, EntityControle e, AreaControle a) throws Exception{
 		proj = new Projection();
 		camera = new Camera();
 		vdm = new VertexDataManager();
 		fcf = new FrustumCullingFilter();
 		areaImages = new AreaImages();
+		
+		entityPainter = new EntityPainter();
+		e.test();
 		
 		fow = new FogOfWar();
 		entitys = e;
@@ -113,7 +122,7 @@ public class Render3D extends SpriteBatch{
 			area.update();
 		}
 		
-		entitys.startFrustum(proj.getProjectionOnly(), camera.getViewMatrix());
+		entitys.startFrustum(proj.getProjectionOnly(), camera.getViewMatrix(), camera.pos);
 		entitys.startSecondCheck();
 		entitys.startProjection(proj.getProjectionOnly(), camera.getViewMatrix());
 		
@@ -123,6 +132,10 @@ public class Render3D extends SpriteBatch{
 		
 		set3Dmode(true);
 		area.render(this, fcf);
+		performance.mark("R. Area");
+		
+		entityPainter.render3dUnits(this, entitys.getPaintIterator(false));
+		performance.mark("R. Units-3D");
 		
 		//setShader(null);
 		//updateProjectionView();
@@ -135,6 +148,7 @@ public class Render3D extends SpriteBatch{
 		//vdm.render(this, true, fcf);
 		
 		fow.renderFOW(this, entitys.getPaintIterator(true));
+		performance.mark("R. FOW");
 		
 		setShader(null);
 		updateProjectionView();
@@ -142,9 +156,12 @@ public class Render3D extends SpriteBatch{
 		cursor.translate = camera.getPosition();
 		cursor.render(this);
 		
+		performance.mark("R. GUI-3D");
+		
 		set3Dmode(false);
 		
 		tacPainter.paintTacIcons(entitys.getLastPaintIterator(), this);
+		performance.mark("R. Tac-Icons");
 	}
 	
 	@Override
@@ -210,5 +227,9 @@ public class Render3D extends SpriteBatch{
 	
 	public Camera getCamera() {
 		return camera;
+	}
+	
+	public void setPerformance(PerformanceMonitor performance) {
+		this.performance = performance;
 	}
 }

@@ -28,10 +28,14 @@ public class AreaControle {
 	
 	public float textureRepeat = 0.2f;
 	
+	private AreaValues area;
+	
 	public AreaControle() throws Exception{
 		shader = new LandscapeShader();
 		
 		mapTex = new Texture(utility.ResourceLoader.loadResource("res/ima/map/defaultMapTexture.png"));
+		
+		area = new AreaValues();
 	}
 	
 	public void prepareMap(){
@@ -65,7 +69,7 @@ public class AreaControle {
 	}
 	
 	public float getNodeHeight(float x, float y){
-		return 0.001f*x*x;
+		return area.getHeight(x, y);
 	}
 	
 	public void render(Render3D r3d, FrustumCullingFilter fcf){

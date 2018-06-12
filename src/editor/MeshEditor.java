@@ -15,7 +15,7 @@ public class MeshEditor extends MoveMenu{
 	private Button[] move;
 
 	public MeshEditor() {
-		super(10, 10, 400, 500);
+		super(10, 400, 400, 500);
 		
 		selTex = PicLoader.pic.getImage("CBqn");
 		
@@ -106,6 +106,23 @@ public class MeshEditor extends MoveMenu{
 			}
 		};
 		b.setText("Step 1.0");
+		add(b);
+		
+		
+		b = new Button(230, 336, "bg") {
+			boolean q = true;
+			@Override
+			protected void isClicked() {
+				q = !q;
+				if(q){
+					setText("FogOfWar: ON");
+				}else{
+					setText("FogOfWar: OFF");
+				}
+				main.grphics.FogOfWar.renderFogOfWar = q;
+			}
+		};
+		b.setText("FogOfWar: ON");
 		add(b);
 	}
 

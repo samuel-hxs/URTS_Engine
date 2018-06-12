@@ -33,6 +33,11 @@ public class EntityUpdateThread extends Thread{
 		for (Entity e : en.list) {
 			e.xPos += Math.sin(e.debug1)*e.debug2;
 			e.yPos += Math.cos(e.debug1)*e.debug2;
+			
+			if(Math.abs(e.xPos) > main.GameControle.getMapSize()/2){
+				e.debug1+=Math.PI;}
+			if(Math.abs(e.yPos) > main.GameControle.getMapSize()/2){
+				e.debug1+=Math.PI;}
 		}
 		en.workEnd();
 	}

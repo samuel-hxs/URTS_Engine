@@ -72,9 +72,18 @@ public class InputHandler {
 	}
 	
 	private void keyPressed(int k, char c, String n){
-		if( k== Keyboard.KEY_ESCAPE){
+		if(k == Keyboard.KEY_ESCAPE){
 			escPressed = true;
 			return;
+		}
+		if(k == Keyboard.KEY_F12){
+			Settings.debugOnScreen = !Settings.debugOnScreen;
+		}
+		if(k == Keyboard.KEY_F11){
+			Settings.debugComplex = !Settings.debugComplex;
+		}
+		if(k == Keyboard.KEY_F9){
+			Settings.debugOnScreenZoom = !Settings.debugOnScreenZoom;
 		}
 		
 		keyChars+=c;

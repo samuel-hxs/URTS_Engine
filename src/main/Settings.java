@@ -7,6 +7,8 @@ public class Settings {
 	
 	public static boolean debugPrint = true;
 	public static boolean debugOnScreen = true;
+	public static boolean debugComplex = true;
+	public static boolean debugOnScreenZoom = false;
 	
 	public static String languageDir = "ENG";
 	

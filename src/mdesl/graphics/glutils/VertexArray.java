@@ -107,8 +107,9 @@ public class VertexArray implements VertexData {
 		//4 bytes per float
 		int stride = totalNumComponents * 4;
 		
+		VertexAttrib a;
 		for (int i=0; i<attributes.length; i++) {
-			VertexAttrib a = attributes[i];
+			a = attributes[i];
 			buffer.position(offset);
 			glEnableVertexAttribArray(a.location);
 			glVertexAttribPointer(a.location, a.numComponents, false, stride, buffer);			
@@ -134,8 +135,7 @@ public class VertexArray implements VertexData {
 	
 	public void unbind() {
 		for (int i=0; i<attributes.length; i++) {
-			VertexAttrib a = attributes[i];
-			glDisableVertexAttribArray(a.location);
+			glDisableVertexAttribArray(attributes[i].location);
 		}
 	}
 

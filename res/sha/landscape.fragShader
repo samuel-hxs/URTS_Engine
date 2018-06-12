@@ -45,6 +45,9 @@ vec4 diffuseColor;
 
 vec4 calcPointLight(Light light, vec3 position, vec3 normal, vec4 texCol)
 {
+	vec3 camera_direction = normalize(u_cameraPos - position);
+	if(dot(normal, camera_direction) < 0) discard;
+	
 	vec4 specColor = vec4(0, 0, 0, 0);
 	vec3 light_direction = light.pos - position;
 	
@@ -58,7 +61,6 @@ vec4 calcPointLight(Light light, vec3 position, vec3 normal, vec4 texCol)
 	float diffuseFactor = max(dot(normal, to_light_source), 0.0);
 	diffuseColor += (vec4(light.color, 0) * light.intensity * diffuseFactor) / attenuationInv;
 	// Specular Light
-	vec3 camera_direction = normalize(u_cameraPos - position);
 	vec3 from_light_source = -to_light_source;
 	vec3 reflected_light = normalize(reflect(from_light_source, normal));
 	float specularFactor = max(dot(camera_direction, reflected_light), 0.0);
@@ -90,4 +92,5 @@ void main() {
 	gl_FragColor = calcPointLight(light1, vPos.xyz, vNormal, texColor);
 	gl_FragColor += vec4(texColor.xyz * diffuseColor.xyz, texColor.w);
 	gl_FragColor += texColor * pow(max(0, dot(vNormal, u_skyLightDir)), u_skyLightPow) * u_skyLightIntens;
+	gl_FragColor.w = 1;
 }

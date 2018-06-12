@@ -41,7 +41,7 @@ public class TacIconPainter {
 		
 		Color c = new Color(0.2f, 0.4f, 1f);
 		for (Entity e : en.list) {
-			if(!e.renderIcon)continue;
+			if(!e.renderIcon || e.outsideFrustum)continue;
 			int x = (int)((e.xOnScreen+1f)*sp.getWidth()/2);
 			int y = (int)((-e.yOnScreen+1f)*sp.getHeight()/2);
 			float s = 1-(float)Math.abs(shinyPoint - e.xPos + e.yPos)*0.01f;

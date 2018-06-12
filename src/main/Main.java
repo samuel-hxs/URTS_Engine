@@ -22,6 +22,7 @@ public class Main {
 			gc.startLoop();
 		} catch (Exception e) {
 			debug.Debug.println("FATAL: "+e.toString(), debug.Debug.FATAL);
+			debug.Debug.printException(e);
 			err = true;
 			e.printStackTrace();
 		}

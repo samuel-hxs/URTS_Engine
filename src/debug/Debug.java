@@ -35,6 +35,11 @@ public class Debug extends TermColors{
 	
 	public static void printException(Exception e){
 		//TODO 
+		log.logError(e);
 		e.printStackTrace();
+	}
+	
+	public static void z_setShutdownDebug(PerformanceMonitor p1, PerformanceMonitor p2){
+		log.setShutdownData(p1, p2);
 	}
 }
