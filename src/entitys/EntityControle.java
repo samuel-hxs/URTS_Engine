@@ -28,6 +28,10 @@ public class EntityControle{
 	private EntityFrustumThread eft;
 	private EntitySecondCheckThread est;
 	
+	private EntityTickUpdate eLTU;
+	
+	private int testAmmount;
+	
 	public EntityControle(){
 		list = new ArrayList<>(); 
 		new EntityThreadTimer();
@@ -37,13 +41,11 @@ public class EntityControle{
 		est = new EntitySecondCheckThread();
 		ept = new EntityProjectionThread();
 		
-		new EntityTickUpdate(this);
+		eLTU = new EntityTickUpdate(this);
 	}
 	
-	public void test(){
-		for (int i = 0; i < 60; i++) {
-			list.add(new EntityList());
-		}
+	public void test(int ammount){
+		testAmmount = ammount;
 	}
 	
 	public synchronized int getBlUpdated(){
@@ -98,6 +100,20 @@ public class EntityControle{
 	 * Must be called at the start of every Frame-Loop!
 	 */
 	public synchronized void reset(){
+		if(testAmmount > 0){
+			eLTU.waintUntilDone();
+			
+			list.clear();
+			while (testAmmount>0) {
+				EntityList e = new EntityList();
+				e.test(testAmmount);
+				list.add(e);
+				testAmmount -= EntityList.NUMBER_OF_UNITS;
+			}
+		}
+		
+		eLTU.startNewRun();
+		
 		lastBlockPainted = 0;
 		lastBlockProjected = 0;
 		lastBlockUpdated = 0;

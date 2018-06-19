@@ -134,7 +134,7 @@ public class TerminalMenu{
 	
 	public void setFocus(){
 		activ = true;
-		KeyListener.forwardKey = teb;
+		//KeyListener.forwardKey = teb; TODO
 	}
 	
 	public void deFocus(){

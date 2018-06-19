@@ -183,7 +183,12 @@ public class CameraHandler {
 	private float getHeightAdd(float x, float y){
 		float f = flightHeight/(MAX_HEIGHT*3f);
 		if(f>1)return 0;
-		return area.getNodeHeight(x, y)*(1-f);
+		float hAvrg = area.getNodeHeight(x, y);
+		hAvrg += area.getNodeHeight(x+flightHeight/4, y);
+		hAvrg += area.getNodeHeight(x, y+flightHeight/4);
+		hAvrg += area.getNodeHeight(x-flightHeight/4, y);
+		hAvrg += area.getNodeHeight(x, y-flightHeight/4);
+		return (hAvrg/5f)*(1-f);
 	}
 	
 	private float getMaxDistToCenter(){

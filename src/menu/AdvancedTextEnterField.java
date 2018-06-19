@@ -1,9 +1,11 @@
 package menu;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import org.lwjgl.input.Keyboard;
 
-public abstract class AdvancedTextEnterField implements KeyListener{
+import utility.InputEvent;
+import utility.InputListenerKey;
+
+public abstract class AdvancedTextEnterField implements InputListenerKey {
 
 	public String text = "";
 	public int tebpos = 0;
@@ -19,53 +21,51 @@ public abstract class AdvancedTextEnterField implements KeyListener{
 		
 	}
 	
-	@Override
-	public void keyPressed(KeyEvent e) {
-		int i = e.getKeyCode();
-		if(i == 37){
-			tebpos--;
-			if(tebpos<0) tebpos = 0;
-		}
-		if(i == 39){
-			tebpos++;
-			if(tebpos>text.length()) tebpos = text.length();
-		}
-		if(i == 33)
-			specialKey(BUTTON_B_UP);
-		if(i == 38)
-			specialKey(BUTTON_UP);
-		if(i == 34)
-			specialKey(BUTTON_B_DOWN);
-		if(i == 40)
-			specialKey(BUTTON_DOWN);
-		if(i == 32 && e.isControlDown())
-			specialKey(BUTTON_CTRL_SPACE);
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
+	public void keyPressed(InputEvent e) {
 		
 	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		if(e.isControlDown())
+	public void keyReleased(InputEvent e) {
+		
+	}
+
+	public void keyTyped(InputEvent e) {
+		if(e.isControlDown)
 			return;
-		char c = e.getKeyChar();
-		if(isSpecialChar(c))
+		char c = e.keyChar;
+		int i = e.keyID;
+		if(i == Keyboard.KEY_LEFT){
+			tebpos--;
+			if(tebpos<0) tebpos = 0;
+		}
+		else if(i == Keyboard.KEY_RIGHT){
+			tebpos++;
+			if(tebpos>text.length()) tebpos = text.length();
+		}
+		else if(i == Keyboard.KEY_PRIOR)
+			specialKey(BUTTON_B_UP);
+		else if(i == Keyboard.KEY_UP)
+			specialKey(BUTTON_UP);
+		else if(i == Keyboard.KEY_NEXT)
+			specialKey(BUTTON_B_DOWN);
+		else if(i == Keyboard.KEY_DOWN)
+			specialKey(BUTTON_DOWN);
+		else if(i == Keyboard.KEY_SPACE && e.isControlDown)
+			specialKey(BUTTON_CTRL_SPACE);
+		else if(isSpecialChar(c))
 			return;
-		if(c == '\n'){
+		else if(i == Keyboard.KEY_RETURN){
 			specialKey(BUTTON_ENTER);
-		}else if(c == 127){
+		}else if(c == Keyboard.KEY_DELETE){
 			if(tebpos < text.length()){
 				text = text.substring(0, tebpos)+text.substring(tebpos+1);
 			}
-		}else if(c == 8){
+		}else if(i == Keyboard.KEY_BACK){
 			if(tebpos > 0){
 				tebpos--;
 				text = text.substring(0, tebpos)+text.substring(tebpos+1);
 			}
-		}else{
+		}else if(c>0 && c<=255){
 			text = text.substring(0, tebpos)+c+text.substring(tebpos);
 			tebpos++;
 		}

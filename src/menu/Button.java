@@ -148,4 +148,8 @@ public abstract class Button extends AbstractButton{
 		}
 	}
 	
+	public void setTextcolor(Color textcolor) {
+		this.textcolor = textcolor;
+	}
+	
 }

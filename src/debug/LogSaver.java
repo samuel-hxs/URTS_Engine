@@ -145,11 +145,12 @@ public class LogSaver extends Thread implements TermPrint{
 		return "[??]";
 	}
 	
-	private PerformanceMonitor p1, p2;
+	private PerformanceMonitor p1, p2, p3;
 	
-	public void setShutdownData(PerformanceMonitor p1, PerformanceMonitor p2){
+	public void setShutdownData(PerformanceMonitor p1, PerformanceMonitor p2, PerformanceMonitor p3){
 		this.p1 = p1;
 		this.p2 = p2;
+		this.p3 = p3;
 	}
 	
 	@Override
@@ -164,16 +165,8 @@ public class LogSaver extends Thread implements TermPrint{
 			writer.println(DIVIDER);
 			writer.println("");
 			
-			writer.println("");
-			writer.println("------Operation-Time: Simpel");
-			if(p1 != null){
-				p1.print(writer);
-			}
-			writer.println("");
-			writer.println("------Operation-Time: Complex");
-			if(p2 != null){
-				p2.print(writer);
-			}
+			writePerformance(writer);
+			
 		} catch (IOException ioe) { 
 			ioe.printStackTrace(); 
 		} finally { 
@@ -181,6 +174,23 @@ public class LogSaver extends Thread implements TermPrint{
 				writer.flush(); 
 				writer.close(); 
 			} 
+		}
+	}
+	
+	public void writePerformance(PrintWriter writer){
+		writer.println("------Operation-Time: Simpel");
+		if(p1 != null){
+			p1.print(writer);
+		}
+		writer.println("");
+		writer.println("------Operation-Time: Complex");
+		if(p2 != null){
+			p2.print(writer);
+		}
+		writer.println("");
+		writer.println("------CPU vs GPU - Time needed");
+		if(p3 != null){
+			p3.print(writer);
 		}
 	}
 }

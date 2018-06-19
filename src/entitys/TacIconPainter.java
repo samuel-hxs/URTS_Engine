@@ -1,5 +1,7 @@
 package entitys;
 
+import java.io.IOException;
+
 import main.PicLoader;
 import mdesl.graphics.Color;
 import mdesl.graphics.SpriteBatch;
@@ -15,29 +17,35 @@ public class TacIconPainter {
 	
 	private double shinyPoint;
 	
-	public TacIconPainter(){
+	public static Texture tacIconTex;
+	
+	public TacIconPainter() throws IOException{
 		buffer = new VertexArray(6000, SpriteBatch.ATTRIBUTES);
+		init();
+	}
+	
+	public static void init() throws IOException{
+		if(tacIconTex == null)
+			tacIconTex = new Texture(utility.ResourceLoader.loadResource("res/ima/gui/tacIcons.png"));
 	}
 	
 	public void paintTacIcons(CollisionFreeEntityIterator c, SpriteBatch sp){
-		TextureRegion tr = PicLoader.pic.getImage("TacIconTest");
-		
 		shinyPoint = (double)(System.currentTimeMillis()/60)%main.GameControle.getMapSize()*8-
 				main.GameControle.getMapSize()*4;
 		shinyPoint /= 2;
 		
 		sp.getShader().setUniformi("u_mode", 1);
 		for(; c.hasNext();){
-			singleBlock(c.next(), sp, tr);
+			singleBlock(c.next(), sp);
 		}
 		if(buffer.getCount()>0)
-			draw(sp, tr.getTexture());
+			draw(sp, tacIconTex);
 		sp.getShader().setUniformi("u_mode", 0);
 	}
 	
-	private void singleBlock(EntityList en, SpriteBatch sp, TextureRegion tr){
+	private void singleBlock(EntityList en, SpriteBatch sp){
 		if(buffer.getCount()+6*EntityList.NUMBER_OF_UNITS >= 6000)
-			draw(sp, tr.getTexture());
+			draw(sp, tacIconTex);
 		
 		Color c = new Color(0.2f, 0.4f, 1f);
 		for (Entity e : en.list) {
@@ -46,7 +54,7 @@ public class TacIconPainter {
 			int y = (int)((-e.yOnScreen+1f)*sp.getHeight()/2);
 			float s = 1-(float)Math.abs(shinyPoint - e.xPos + e.yPos)*0.01f;
 			if(s<0)s = 0;
-			paint(sp, tr, x, y, c, s);
+			paint(sp, e.model.getIcon(), x, y, c, s);
 			debug.FrameStatistics.entitysPainted++;
 		}
 	}

@@ -42,6 +42,7 @@ public class GameControle implements Runnable{
 	
 	private debug.PerformanceMonitor performanceS;
 	private debug.PerformanceMonitor performanceC;
+	public static debug.PerformanceM_GPU performanceGPU;
 	
 	private static int mapSize = 200;
 	
@@ -80,14 +81,16 @@ public class GameControle implements Runnable{
 		gui = new GuiControle();
 		hli = new HigherLevelInput(input, cameraHandler);
 		
-		performanceS = new debug.PerformanceMonitor("Main Loop");
-		performanceC = new debug.PerformanceMonitor("Main Loop");
+		performanceS = new debug.PerformanceMonitor("Main Loop Simple");
+		performanceC = new debug.PerformanceMonitor("Main Loop Complex");
+		performanceGPU = new debug.PerformanceM_GPU("CPU / GPU");
 		
-		debug.Debug.z_setShutdownDebug(performanceS, performanceC);
+		debug.Debug.z_setShutdownDebug(performanceS, performanceC, performanceGPU);
 		render3d.setPerformance(performanceC);
 		
 		////////////TEST
 		gui.addMenu(new editor.MeshEditor());
+		gui.addMenu(new editor.EntityEditor(1500, 50, entitys));
 		
 	}
 	
@@ -101,6 +104,7 @@ public class GameControle implements Runnable{
 		while(!input.escPressed){
 			performanceS.start();
 			performanceC.start();
+			performanceGPU.start();
 			timePassed = (int)(System.currentTimeMillis()-lastTime);
 			lastTime = System.currentTimeMillis();
 			
@@ -153,10 +157,12 @@ public class GameControle implements Runnable{
 				font14.render(spriteBatch, "RAM: "+generateRAM(), 3, 24);
 				font14.render(spriteBatch, "Entity-Threads: "+EntityThreadTimer.t, 3, 34);
 				font14.render(spriteBatch, "LTU: "+EntityTickUpdate.lastTime()+"ms", 3, 44);
-				if(Settings.debugComplex)
-					performanceC.draw(3, 64, spriteBatch, font14);
-				else
+				if(Settings.debugComplex == 1)
 					performanceS.draw(3, 64, spriteBatch, font14);
+				if(Settings.debugComplex == 2)
+					performanceC.draw(3, 64, spriteBatch, font14);
+				if(Settings.debugComplex == 3)
+					performanceGPU.draw(3, 64, spriteBatch, font14);
 			}else{
 				font14.render(spriteBatch, fps, 3, 14);
 			}
@@ -166,12 +172,14 @@ public class GameControle implements Runnable{
 			performanceS.mark("Render All");
 			performanceC.mark("R. Gui");
 			
+			performanceGPU.markCPU_done();
 			Display.update();
 			performanceS.mark("Display");
 			performanceC.mark("Display");
 			
 			Display.sync(60);//TODO FPS
 			debug.Timing.markFps(System.nanoTime()-t);
+			performanceGPU.markSleep_done();
 			
 			input.keyChars = "";
 			debug.FrameStatistics.clear();

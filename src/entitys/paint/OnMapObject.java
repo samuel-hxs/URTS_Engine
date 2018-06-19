@@ -16,10 +16,16 @@ public class OnMapObject {
 	
 	private Texture texture;
 	
+	public String name;
+	
+	public final int size;
+	
 	public OnMapObject(int size, Texture t){
 		data = new VertexArray(size, LandscapeShader.ATTRIBUTES);
 		m = new Matrix4f();
 		texture = t;
+		
+		this.size = size;
 	}
 	
 	public void flip(){

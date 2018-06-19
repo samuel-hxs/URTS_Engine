@@ -31,6 +31,9 @@ public class AreaValues {
 			int x = i-arrayOffset;
 			for (int j = 0; j < heightMap[i].length; j++) {
 				heightMap[i][j] = x*x/10;
+				
+				heightMap[i][j] += (int)(editor.map.SimplexNoise.noise(0.003*i, 0.003*j)*4000+
+						editor.map.SimplexNoise.noise(0.03*i, 0.03*j)*130);
 			}
 		}
 	}

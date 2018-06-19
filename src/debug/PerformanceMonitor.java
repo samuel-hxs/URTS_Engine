@@ -23,10 +23,10 @@ public class PerformanceMonitor {
 	
 	private final String name;
 	
-	private List<Mark> marks;
+	protected List<Mark> marks;
 	
 	//Counts the loops
-	private long loop;
+	protected long loop;
 	
 	private TextureRegion white;
 	
@@ -46,6 +46,7 @@ public class PerformanceMonitor {
 		name = n;
 		marks = new ArrayList<>();
 		white = PicLoader.pic.getImage("w");
+		time = System.nanoTime();
 	}
 	
 	public void start(){
@@ -73,12 +74,15 @@ public class PerformanceMonitor {
 	}
 	
 	public void draw(int x, int y, SpriteBatch sp, FontRenderer font){
-		long l1 = 0;
-		long l2 = 0;
+		long l1 = 1;
+		long l2 = 1;
 		for (Mark mark : marks) {
 			l1 += mark.t10;
 			l2 += mark.t50;
 		}
+		
+		font.render(sp, "Time-Marks: "+name, x, y);
+		y+=20;
 		
 		int i = 0;
 		for (Mark mark : marks) {
@@ -91,21 +95,21 @@ public class PerformanceMonitor {
 	}
 	
 	public void print(PrintWriter p){
-		long l1 = 0;
-		long l2 = 0;
+		long l1 = 1;
+		long l2 = 1;
 		for (Mark mark : marks) {
 			l1 += mark.t10;
 			l2 += mark.t500;
 		}
 		
-		p.println("Total: "+milliseconds(l2));
+		p.println("Total T500:"+milliseconds(l2)+" / T10:"+milliseconds(l1));
 		int i = 0;
 		for (Mark mark : marks) {
 			mark.print(p, l1, l2, i++);
 		}
 	}
 	
-	private class Mark{
+	protected class Mark{
 		
 		private final String name;
 		
@@ -120,7 +124,7 @@ public class PerformanceMonitor {
 			name = n;
 		}
 		
-		private void mark(long t){
+		protected void mark(long t){
 			t10 = (t10*9l+t)/10l;
 			t50 = (t50*49l+t)/50l;
 			t500 = (t500*499l+t)/500l;

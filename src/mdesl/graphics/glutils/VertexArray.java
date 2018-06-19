@@ -103,6 +103,7 @@ public class VertexArray implements VertexData {
 	}
 	
 	public void bind() {
+		main.GameControle.performanceGPU.markCPU_done();
 		int offset = 0;
 		//4 bytes per float
 		int stride = totalNumComponents * 4;
@@ -118,7 +119,9 @@ public class VertexArray implements VertexData {
 	}
 	
 	public void draw(int geom, int first) {
+		main.GameControle.performanceGPU.markBUS_done();
 		glDrawArrays(geom, first, count);
+		main.GameControle.performanceGPU.markGPU_done();
 	}
 	
 	public int getCount() {

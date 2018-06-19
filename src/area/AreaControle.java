@@ -30,12 +30,16 @@ public class AreaControle {
 	
 	private AreaValues area;
 	
+	public static AreaControle currentArea;
+	
 	public AreaControle() throws Exception{
 		shader = new LandscapeShader();
 		
 		mapTex = new Texture(utility.ResourceLoader.loadResource("res/ima/map/defaultMapTexture.png"));
 		
 		area = new AreaValues();
+		
+		currentArea = this;
 	}
 	
 	public void prepareMap(){

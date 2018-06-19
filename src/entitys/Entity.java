@@ -27,7 +27,7 @@ public class Entity {
 	
 	public Entity3DModel model;
 	
-	public Entity(){
+	public Entity(int modelID){
 		xPos = (float)Math.random()*200-100;
 		yPos = (float)Math.random()*200-100;
 		
@@ -36,7 +36,7 @@ public class Entity {
 		
 		zPos = 1;
 		
-		model = entitys.paint.EntityPainter.getModel(1);
+		model = entitys.paint.EntityPainter.getModel(modelID);
 	}
 	
 }

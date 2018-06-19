@@ -53,7 +53,6 @@ public class Render3D extends SpriteBatch{
 		areaImages = new AreaImages();
 		
 		entityPainter = new EntityPainter();
-		e.test();
 		
 		fow = new FogOfWar();
 		entitys = e;

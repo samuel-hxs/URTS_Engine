@@ -450,7 +450,9 @@ public class SpriteBatch {
 
 	public void render(VertexData d, Texture t) {
 		if (t != null && t != boundTexture){
+			main.GameControle.performanceGPU.markCPU_done();
 			t.bind();
+			main.GameControle.performanceGPU.markUNI_done();
 			boundTexture = t;
 		}
 		d.bind();

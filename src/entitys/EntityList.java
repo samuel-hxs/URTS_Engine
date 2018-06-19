@@ -16,9 +16,12 @@ public class EntityList{
 		list = new ArrayList<>(NUMBER_OF_UNITS);
 		
 		sema = new Semaphore(1);
-		
-		for (int i = 0; i < NUMBER_OF_UNITS; i++) {
-			list.add(new Entity());
+	}
+	
+	public void test(int n){
+		if(n>NUMBER_OF_UNITS) n = NUMBER_OF_UNITS;
+		for (int i = 0; i < n; i++) {
+			list.add(new Entity(1));
 		}
 	}
 	

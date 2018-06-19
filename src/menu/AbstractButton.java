@@ -76,6 +76,8 @@ public abstract class AbstractButton implements MenuAddable{
 		
 		if(q && mouseLeft){
 			clicked();
+		}else{
+			unClicked();
 		}
 		
 		mouseLeft = false;
@@ -124,6 +126,8 @@ public abstract class AbstractButton implements MenuAddable{
 	}
 	
 	protected void update(){}
+	
+	protected void unClicked(){}
 	
 	public void checkScroll(int x, int y, int xScr, int yScr){}
 	

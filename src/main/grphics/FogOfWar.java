@@ -99,7 +99,7 @@ public class FogOfWar {
 		for (Entity e : en.list) {
 			if(!e.renderFow || e.renderFowSkip)continue;
 			
-			drawArea(e.xPos, e.yPos, e.fowRadius, ZERO_PLAIN-addDepth);
+			drawArea(e.xPos, e.yPos, e.fowRadius, e.zPos);
 			debug.FrameStatistics.entityFOW++;
 		}
 	}

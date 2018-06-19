@@ -194,6 +194,7 @@ public class ShaderProgram {
 	 * @throws LWJGLException if there was an issue
 	 * @throws IllegalArgumentException if there was an issue */
 	public ShaderProgram(String filePath, List<VertexAttrib> attribLocations) throws Exception {
+		debug.Debug.println("Loading Shader: "+filePath);
 		vertShaderSource = "";
 		fragShaderSource = "";
 		FileReader fr = new FileReader(filePath+".vertShader");
@@ -837,7 +838,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformf(int loc, float f) {
 		if (loc==-1) return;
+		main.GameControle.performanceGPU.markCPU_done();
 		glUniform1f(loc, f);
+		main.GameControle.performanceGPU.markUNI_done();
 	}
 	
 	/**
@@ -848,7 +851,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformf(int loc, float a, float b) {
 		if (loc==-1) return;
+		main.GameControle.performanceGPU.markCPU_done();
 		glUniform2f(loc, a, b);
+		main.GameControle.performanceGPU.markUNI_done();
 	}
 	
 	/**
@@ -860,7 +865,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformf(int loc, float a, float b, float c) {
 		if (loc==-1) return;
+		main.GameControle.performanceGPU.markCPU_done();
 		glUniform3f(loc, a, b, c);
+		main.GameControle.performanceGPU.markUNI_done();
 	}
 
 	/**
@@ -873,7 +880,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformf(int loc, float a, float b, float c, float d) {
 		if (loc==-1) return;
+		main.GameControle.performanceGPU.markCPU_done();
 		glUniform4f(loc, a, b, c, d);
+		main.GameControle.performanceGPU.markUNI_done();
 	}
 
 	/**
@@ -883,7 +892,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformi(int loc, int i) {
 		if (loc==-1) return;
+		main.GameControle.performanceGPU.markCPU_done();
 		glUniform1i(loc, i);
+		main.GameControle.performanceGPU.markUNI_done();
 	}
 	
 	/**
@@ -894,7 +905,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformi(int loc, int a, int b) {
 		if (loc==-1) return;
+		main.GameControle.performanceGPU.markCPU_done();
 		glUniform2i(loc, a, b);
+		main.GameControle.performanceGPU.markUNI_done();
 	}
 
 	/**
@@ -906,7 +919,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformi(int loc, int a, int b, int c) {
 		if (loc==-1) return;
+		main.GameControle.performanceGPU.markCPU_done();
 		glUniform3i(loc, a, b, c);
+		main.GameControle.performanceGPU.markUNI_done();
 	}
 	
 	/**
@@ -919,7 +934,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformi(int loc, int a, int b, int c, int d) {
 		if (loc==-1) return;
+		main.GameControle.performanceGPU.markCPU_done();
 		glUniform4i(loc, a, b, c, d);
+		main.GameControle.performanceGPU.markUNI_done();
 	}
 	
 	

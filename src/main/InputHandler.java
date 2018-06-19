@@ -4,6 +4,9 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import utility.InputEvent;
+import utility.InputListenerKey;
+
 public class InputHandler {
 
 	private boolean[] mouseButtons;
@@ -23,9 +26,17 @@ public class InputHandler {
 	public boolean mouseMP;
 	public boolean mouseMR;
 	
+	private boolean isShiftDown;
+	private boolean isContoleDown;
+	private boolean isAltDown;
+	
+	public static InputListenerKey listener;
+	
 	public InputHandler() throws LWJGLException{
 		mouseButtons = new boolean[10];
 		currentlyPressed = new InputChar[20];
+		
+		Keyboard.enableRepeatEvents(true);
 	}
 	
 	public void loop(){
@@ -76,17 +87,33 @@ public class InputHandler {
 			escPressed = true;
 			return;
 		}
+		
+		if(k == Keyboard.KEY_LCONTROL || k == Keyboard.KEY_RCONTROL) isContoleDown = true;
+		if(k == Keyboard.KEY_LMENU || k == Keyboard.KEY_RMENU) isAltDown = true;
+		if(k == Keyboard.KEY_LSHIFT || k == Keyboard.KEY_RSHIFT) isShiftDown = true;
+		
 		if(k == Keyboard.KEY_F12){
 			Settings.debugOnScreen = !Settings.debugOnScreen;
 		}
 		if(k == Keyboard.KEY_F11){
-			Settings.debugComplex = !Settings.debugComplex;
+			Settings.debugComplex = (Settings.debugComplex+1)%4;
 		}
 		if(k == Keyboard.KEY_F9){
 			Settings.debugOnScreenZoom = !Settings.debugOnScreenZoom;
 		}
 		
-		keyChars+=c;
+		InputEvent e = new InputEvent(k, c, isContoleDown, isShiftDown, isAltDown);
+		
+		if(listener != null){
+			listener.keyTyped(e);
+			if(listener != null)
+				listener.keyPressed(e);
+			
+			return;
+		}else{
+			keyChars+=c;
+		}
+		
 		for (int i = 0; i < currentlyPressed.length; i++) {
 			if(currentlyPressed[i] == null){
 				currentlyPressed[i] = new InputChar(c, k);
@@ -98,6 +125,12 @@ public class InputHandler {
 	}
 	
 	private void keyReleased(int k, char c, String n){
+		if(k == Keyboard.KEY_LCONTROL || k == Keyboard.KEY_RCONTROL) isContoleDown = false;
+		if(k == Keyboard.KEY_LMENU || k == Keyboard.KEY_RMENU) isAltDown = false;
+		if(k == Keyboard.KEY_LSHIFT || k == Keyboard.KEY_RSHIFT) isShiftDown = false;
+		
+		if(listener != null) listener.keyReleased(new InputEvent(k, c, isContoleDown, isShiftDown, isAltDown));
+		
 		for (int i = 0; i < currentlyPressed.length; i++) {
 			if(currentlyPressed[i] == null)
 				continue;

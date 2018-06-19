@@ -34,6 +34,12 @@ public class FontRenderer {
 		public Glyph(){
 			distanceTo = new HashMap<>();
 		}
+		
+		public int getDistanceTo(char c){
+			if(distanceTo.containsKey(c))
+				return distanceTo.get(c);
+			return distanceTo.get('a');
+		}
 	}
 	
 	public void render(SpriteBatch sp, String s, int x, int y){
@@ -42,9 +48,11 @@ public class FontRenderer {
 		y-=lineOffset;
 		for (int i = 0; i < s.length(); i++) {
 			Glyph gl = glyphs.get(s.charAt(i));
+			if(gl == null)
+				gl = glyphs.get('?');
 			sp.draw(gl.region, x, y);
 			if(i < s.length()-1)
-				x+=gl.distanceTo.get(s.charAt(i+1));
+				x+=gl.getDistanceTo(s.charAt(i+1));
 		}
 	}
 	
@@ -52,10 +60,20 @@ public class FontRenderer {
 		int x = 0;
 		if(s == null)
 			return 0;
+		if(s.length() == 0)
+			return 0;
 		for (int i = 0; i < s.length(); i++) {
 			Glyph gl = glyphs.get(s.charAt(i));
+			if(gl == null)
+				gl = glyphs.get('?');
 			if(i < s.length()-1)
-				x+=gl.distanceTo.get(s.charAt(i+1));
+				x+=gl.getDistanceTo(s.charAt(i+1));
+		}
+		if(s.length() == 1){
+			Glyph gl = glyphs.get(s.charAt(0));
+			if(gl == null)
+				gl = glyphs.get('?');
+			return gl.getDistanceTo('a');
 		}
 		return x+x/(s.length()-1);
 	}
@@ -110,6 +128,7 @@ public class FontRenderer {
 		fonts = new ArrayList<>();
 		tex = new Texture(utility.ResourceLoader.loadResource("res/font/map/tex.png"));
 		fonts.add(new FontRenderer("MONO_14", tex));
+		fonts.add(new FontRenderer("SANS_14", tex));
 	}
 	
 	public static FontRenderer getFont(String name){

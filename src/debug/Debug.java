@@ -39,7 +39,7 @@ public class Debug extends TermColors{
 		e.printStackTrace();
 	}
 	
-	public static void z_setShutdownDebug(PerformanceMonitor p1, PerformanceMonitor p2){
-		log.setShutdownData(p1, p2);
+	public static void z_setShutdownDebug(PerformanceMonitor p1, PerformanceMonitor p2, PerformanceMonitor p3){
+		log.setShutdownData(p1, p2, p3);
 	}
 }

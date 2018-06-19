@@ -1,6 +1,7 @@
 package entitys;
 
 import java.util.BitSet;
+import java.util.concurrent.Semaphore;
 
 /**
  * A slow updater handling on 500ms tick-rate. Updates renderFOW-Flags etc. 
@@ -10,16 +11,25 @@ public class EntityTickUpdate extends Thread{
 
 	public final EntityControle ec;
 	private long mark;
-	private static long time;
+	private static long time = -1;
 	
 	private BitSet bits;
 	public static final int RESOLUTION = 500;
 	private float ratio;
 	
+	private Semaphore startSmea;
+	private Semaphore doneSema;
+	
 	public EntityTickUpdate(EntityControle e){
+		super("Entity Long-Term-Update");
 		ec = e;
 		
 		bits = new BitSet(RESOLUTION*RESOLUTION);
+		
+		startSmea = new Semaphore(1);
+		doneSema = new Semaphore(1);
+		
+		mark = System.currentTimeMillis();
 		
 		start();
 	}
@@ -27,13 +37,18 @@ public class EntityTickUpdate extends Thread{
 	@Override
 	public void run() {
 		while(true){
+			
 			long t = System.currentTimeMillis()-mark;
-			if(t<500 && t>0){
+			if(t<500 && t>=0){
 				try {
 					sleep(500-t);
 				} catch (Exception e) {
 				}
 			}
+			
+			startSmea.acquireUninterruptibly();
+			doneSema.acquireUninterruptibly();
+			
 			mark = System.currentTimeMillis();
 			
 			ratio = (float)main.GameControle.getMapSize() / (float)RESOLUTION;
@@ -44,6 +59,8 @@ public class EntityTickUpdate extends Thread{
 			}
 			
 			setTime(System.currentTimeMillis()-mark);
+			
+			doneSema.release();
 		}
 	}
 	
@@ -82,5 +99,21 @@ public class EntityTickUpdate extends Thread{
 			}
 		}
 		return needed;
+	}
+	
+	/**
+	 * Will lock until the current Run is finished
+	 */
+	public void waintUntilDone(){
+		doneSema.acquireUninterruptibly();
+		doneSema.release();
+	}
+	
+	/**
+	 * Starts a new run if not already running
+	 */
+	public void startNewRun(){
+		if(doneSema.availablePermits() > 0)
+			startSmea.release();
 	}
 }

@@ -86,9 +86,9 @@ public class FontCreater {
 	public static void main(String[] args) {
 		Font font;
 		try {
-			font = Font.createFont(Font.TRUETYPE_FONT, new File("res/font/FreeMono.ttf"));
+			font = Font.createFont(Font.TRUETYPE_FONT, new File("res/font/FreeSans.ttf"));
 			font = font.deriveFont(14f);
-			create("MONO_14", font, 0,0,4, true);
+			create("SANS_14", font, 256,0,4, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -3,6 +3,8 @@ package entitys;
 import java.util.Iterator;
 import java.util.concurrent.Semaphore;
 
+import area.AreaControle;
+
 public class EntityUpdateThread extends Thread{
 
 	private Semaphore sema;
@@ -38,6 +40,8 @@ public class EntityUpdateThread extends Thread{
 				e.debug1+=Math.PI;}
 			if(Math.abs(e.yPos) > main.GameControle.getMapSize()/2){
 				e.debug1+=Math.PI;}
+			
+			e.zPos = AreaControle.currentArea.getNodeHeight(e.xPos, e.yPos)+1;
 		}
 		en.workEnd();
 	}
