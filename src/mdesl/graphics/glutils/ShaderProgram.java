@@ -48,15 +48,15 @@ import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glDeleteShader;
 import static org.lwjgl.opengl.GL20.glDetachShader;
 import static org.lwjgl.opengl.GL20.glGetActiveAttrib;
-import static org.lwjgl.opengl.GL20.glGetActiveAttribSize;
-import static org.lwjgl.opengl.GL20.glGetActiveAttribType;
+//import static org.lwjgl.opengl.GL20.glGetActiveAttribSize;
+//import static org.lwjgl.opengl.GL20.glGetActiveAttribType;
 import static org.lwjgl.opengl.GL20.glGetActiveUniform;
 import static org.lwjgl.opengl.GL20.glGetAttribLocation;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderi;
-import static org.lwjgl.opengl.GL20.glGetUniform;
+import static org.lwjgl.opengl.GL20.glGetUniformfv;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glShaderSource;
@@ -68,29 +68,30 @@ import static org.lwjgl.opengl.GL20.glUniform3f;
 import static org.lwjgl.opengl.GL20.glUniform3i;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniform4i;
-import static org.lwjgl.opengl.GL20.glUniformMatrix3;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4;
+import static org.lwjgl.opengl.GL20.glUniformMatrix3fv;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.List;
 
+
+import static org.lwjgl.opengl.GL11.*;
+
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GLContext;
-import org.lwjgl.util.vector.Matrix3f;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
 /** A complete ShaderProgram utility wrapper.
  * 
@@ -119,10 +120,12 @@ public class ShaderProgram {
 	 * GL_ARB_vertex_shader, and GL_ARB_fragment shader are present.
 	 * 
 	 * @return true if shaders are supported */
+	// TODO: Check with GLFW3 for Context
 	public static boolean isSupported() {
-		ContextCapabilities c = GLContext.getCapabilities();
-		return c.GL_ARB_shader_objects && c.GL_ARB_vertex_shader && c.GL_ARB_fragment_shader;
+		//ContextCapabilities c = GLContext.getCapabilities();
+		//return c.GL_ARB_shader_objects && c.GL_ARB_vertex_shader && c.GL_ARB_fragment_shader;
 		// return c.OpenGL20;
+		return true;
 	}
 
 	/** Whether shader programs are to use "strict" uniform/attribute name
@@ -212,15 +215,18 @@ public class ShaderProgram {
 		}
 		br.close();
 		
-		if (!isSupported())
-			throw new LWJGLException("no shader support found; shaders require OpenGL 2.0");
+		//TODO: Better Exceptions
+		if (!isSupported()) {
+			throw new Exception("no shader support found; shaders require OpenGL 2.0");
+		}
 		
 		vert = compileShader(VERTEX_SHADER, vertShaderSource);
 		frag = compileShader(FRAGMENT_SHADER, fragShaderSource);
 		program = createProgram();
+		
 		try {
 			linkProgram(attribLocations);
-		} catch (LWJGLException e) {
+		} catch (Exception e) {
 			dispose();
 			throw e;
 		}
@@ -264,10 +270,12 @@ public class ShaderProgram {
 	 * 
 	 * @return the OpenGL handle for the newly created shader program
 	 * @throws SlimException if the result is zero */
-	protected int createProgram() throws LWJGLException {
+	//TODO: Better Exceptions
+	protected int createProgram() throws Exception {
 		int program = glCreateProgram();
-		if (program == 0)
-			throw new LWJGLException("could not create program; check ShaderProgram.isSupported()");
+		if (program == 0) {
+			throw new Exception("could not create program; check ShaderProgram.isSupported()");
+		}
 		return program;
 	}
 
@@ -291,11 +299,12 @@ public class ShaderProgram {
 	 * @param source the source code to compile
 	 * @return the resulting ID
 	 * @throws SlimException if compilation was unsuccessful */
-	protected int compileShader(int type, String source) throws LWJGLException {
+	//TODO: Better Exceptions
+	protected int compileShader(int type, String source) throws Exception {
 		int shader = glCreateShader(type);
-		if (shader == 0)
-			throw new LWJGLException(
-					"could not create shader object; check ShaderProgram.isSupported()");
+		if (shader == 0) {
+			throw new Exception("could not create shader object; check ShaderProgram.isSupported()");
+		}
 		glShaderSource(shader, source);
 		glCompileShader(shader);
 
@@ -303,10 +312,12 @@ public class ShaderProgram {
 		int len = glGetShaderi(shader, GL_INFO_LOG_LENGTH);
 		String t = shaderTypeString(type);
 		String err = glGetShaderInfoLog(shader, len);
-		if (err != null && err.length() != 0)
+		if (err != null && err.length() != 0) {
 			log += t + " compile log:\n" + err + "\n";
-		if (comp == GL11.GL_FALSE)
-			throw new LWJGLException(log.length()!=0 ? log : "Could not compile "+shaderTypeString(type));
+		}
+		if (comp == GL11.GL_FALSE) {
+			throw new Exception(log.length()!=0 ? log : "Could not compile "+shaderTypeString(type));
+		}
 		return shader;
 	}
 
@@ -324,9 +335,10 @@ public class ShaderProgram {
 	 * appearance
 	 * @throws SlimException if this program is invalid (released) or if the
 	 * link was unsuccessful */
-	protected void linkProgram(List<VertexAttrib> attribLocations) throws LWJGLException {
+	//TODO: Better Exceptions
+	protected void linkProgram(List<VertexAttrib> attribLocations) throws Exception {
 		if (!valid())
-			throw new LWJGLException("trying to link an invalid (i.e. released) program");
+			throw new Exception("trying to link an invalid (i.e. released) program");
 
 		uniforms.clear();
 
@@ -347,9 +359,9 @@ public class ShaderProgram {
 			log = err + "\n" + log;
 		if (log != null)
 			log = log.trim();
-		if (comp == GL11.GL_FALSE)
-			throw new LWJGLException(log.length()!=0 ? log : "Could not link program");
-
+		if (comp == GL11.GL_FALSE) {
+			throw new Exception(log.length()!=0 ? log : "Could not link program");
+		}
 		fetchUniforms();
 		fetchAttributes();
 	}
@@ -452,9 +464,10 @@ public class ShaderProgram {
 		int strLen = glGetProgrami(program, GL_ACTIVE_UNIFORM_MAX_LENGTH);
 
 		for (int i = 0; i < len; i++) {
-			String name = glGetActiveUniform(program, i, strLen);
-			int id = glGetUniformLocation(program, name);
-			uniforms.put(name, id);
+//			TODO: Fix it
+//			String name = glGetActiveUniform(program, i, strLen);
+//			int id = glGetUniformLocation(program, name);
+//			uniforms.put(name, id);
 		}
 	}
 
@@ -466,11 +479,14 @@ public class ShaderProgram {
 		attributes = new Attrib[len];
 		for (int i = 0; i < len; i++) {
 			Attrib a = new Attrib();
-			// TODO: use proper FloatBuffer method instead of these convenience
-			// methods
-			a.name = glGetActiveAttrib(program, i, strLen);
-			a.size = glGetActiveAttribSize(program, i);
-			a.type = glGetActiveAttribType(program, i);
+			// TODO: use proper FloatBuffer method instead of these convenience methods
+			// TODO: What are the other variabls?
+			int length = 2;
+			IntBuffer type = IntBuffer.allocate(length);
+			IntBuffer text = IntBuffer.allocate(length);
+			a.name = glGetActiveAttrib(program, i, length, type, text);
+//			a.size = glGetActiveAttribSize(program, i);
+//			a.type = glGetActiveAttribType(program, i);
 			a.location = glGetAttribLocation(program, a.name);
 			attributes[i] = a;
 		}
@@ -597,15 +613,15 @@ public class ShaderProgram {
 		return fbuf16;
 	}
 
-	private IntBuffer uniformi(int loc) {
-		if (ibuf4 == null)
-			ibuf4 = BufferUtils.createIntBuffer(4);
-		ibuf4.clear();
-		if (loc == -1)
-			return ibuf4;
-		getUniform(loc, ibuf4);
-		return ibuf4;
-	}
+//	private IntBuffer uniformi(int loc) {
+//		if (ibuf4 == null)
+//			ibuf4 = BufferUtils.createIntBuffer(4);
+//		ibuf4.clear();
+//		if (loc == -1)
+//			return ibuf4;
+//		getUniform(loc, ibuf4);
+//		return ibuf4;
+//	}
 
 
 	/** Retrieves data from a uniform and places it in the given buffer.
@@ -613,16 +629,16 @@ public class ShaderProgram {
 	 * @param loc the location of the uniform
 	 * @param buf the buffer to place the data */
 	public void getUniform(int loc, FloatBuffer buf) {
-		glGetUniform(program, loc, buf);
+		glGetUniformfv(program, loc, buf);
 	}
 
-	/** Retrieves data from a uniform and places it in the given buffer.
-	 * 
-	 * @param loc the location of the uniform
-	 * @param buf the buffer to place the data */
-	public void getUniform(int loc, IntBuffer buf) {
-		glGetUniform(program, loc, buf);
-	}
+//	/** Retrieves data from a uniform and places it in the given buffer.
+//	 * 
+//	 * @param loc the location of the uniform
+//	 * @param buf the buffer to place the data */
+//	public void getUniform(int loc, IntBuffer buf) {
+//		glGetUniform(program, loc, buf);
+//	}
 
 	/** Retrieves data from a uniform and places it in the given buffer. If
 	 * strict mode is enabled, this will throw an IllegalArgumentException if
@@ -643,108 +659,108 @@ public class ShaderProgram {
 		return true;
 	}
 
-	/** Retrieves data from a uniform and places it in the given buffer. If
-	 * strict mode is enabled, this will throw an IllegalArgumentException if
-	 * the given uniform is not 'active' -- i.e. if GLSL determined that the
-	 * shader isn't using it. If strict mode is disabled, this method will
-	 * return <tt>true</tt> if the uniform was found, and <tt>false</tt>
-	 * otherwise.
-	 * 
-	 * @param name the name of the uniform
-	 * @param buf the buffer to place the data
-	 * @return true if the uniform was found, false if there is no active
-	 * uniform by that name */
-	public boolean getUniform(String name, IntBuffer buf) {
-		int id = getUniformLocation(name);
-		if (id == -1)
-			return false;
-		getUniform(id, buf);
-		return true;
-	}
+//	/** Retrieves data from a uniform and places it in the given buffer. If
+//	 * strict mode is enabled, this will throw an IllegalArgumentException if
+//	 * the given uniform is not 'active' -- i.e. if GLSL determined that the
+//	 * shader isn't using it. If strict mode is disabled, this method will
+//	 * return <tt>true</tt> if the uniform was found, and <tt>false</tt>
+//	 * otherwise.
+//	 * 
+//	 * @param name the name of the uniform
+//	 * @param buf the buffer to place the data
+//	 * @return true if the uniform was found, false if there is no active
+//	 * uniform by that name */
+//	public boolean getUniform(String name, IntBuffer buf) {
+//		int id = getUniformLocation(name);
+//		if (id == -1)
+//			return false;
+//		getUniform(id, buf);
+//		return true;
+//	}
 
-	/** A convenience method to retrieve an integer/sampler2D uniform. The return
-	 * values are undefined if the uniform is not found.
-	 * 
-	 * @param loc the uniform location
-	 * @return the value */
-	public int getUniform1i(int loc) {
-		return uniformi(loc).get(0);
-	}
+//	/** A convenience method to retrieve an integer/sampler2D uniform. The return
+//	 * values are undefined if the uniform is not found.
+//	 * 
+//	 * @param loc the uniform location
+//	 * @return the value */
+//	public int getUniform1i(int loc) {
+//		return uniformi(loc).get(0);
+//	}
+//
+//	/** A convenience method to retrieve an integer/sampler2D uniform. The return
+//	 * values are undefined if the uniform is not found.
+//	 * 
+//	 * @param name the uniform location
+//	 * @return the value */
+//	public int getUniform1i(String name) {
+//		return getUniform1i(getUniformLocation(name));
+//	}
+//
+//	/** A convenience method to retrieve an ivec2 uniform; for maximum
+//	 * performance and memory efficiency you should use getUniform(int,
+//	 * IntBuffer) with a shared buffer.
+//	 * 
+//	 * @param loc the uniform location
+//	 * @return a newly created int[] array with 2 elements; e.g. (x, y) */
+//	public int[] getUniform2i(int loc) {
+//		IntBuffer buf = uniformi(loc);
+//		return new int[] { buf.get(0), buf.get(1) };
+//	}
+//
+//	/** A convenience method to retrieve an ivec2 uniform; for maximum
+//	 * performance and memory efficiency you should use getUniform(int,
+//	 * IntBuffer) with a shared buffer. The return values are undefined if the
+//	 * uniform is not found.
+//	 * 
+//	 * @param name the uniform name
+//	 * @return a newly created int[] array with 2 elements; e.g. (x, y) */
+//	public int[] getUniform2i(String name) {
+//		return getUniform2i(getUniformLocation(name));
+//	}
+//
+//	/** A convenience method to retrieve an ivec3 uniform; for maximum
+//	 * performance and memory efficiency you should use getUniform(String,
+//	 * IntBuffer) with a shared buffer.
+//	 * 
+//	 * @param loc the name of the uniform
+//	 * @return a newly created int[] array with 3 elements; e.g. (x, y, z) */
+//	public int[] getUniform3i(int loc) {
+//		IntBuffer buf = uniformi(loc);
+//		return new int[] { buf.get(0), buf.get(1), buf.get(2) };
+//	}
 
-	/** A convenience method to retrieve an integer/sampler2D uniform. The return
-	 * values are undefined if the uniform is not found.
-	 * 
-	 * @param name the uniform location
-	 * @return the value */
-	public int getUniform1i(String name) {
-		return getUniform1i(getUniformLocation(name));
-	}
-
-	/** A convenience method to retrieve an ivec2 uniform; for maximum
-	 * performance and memory efficiency you should use getUniform(int,
-	 * IntBuffer) with a shared buffer.
-	 * 
-	 * @param loc the uniform location
-	 * @return a newly created int[] array with 2 elements; e.g. (x, y) */
-	public int[] getUniform2i(int loc) {
-		IntBuffer buf = uniformi(loc);
-		return new int[] { buf.get(0), buf.get(1) };
-	}
-
-	/** A convenience method to retrieve an ivec2 uniform; for maximum
-	 * performance and memory efficiency you should use getUniform(int,
-	 * IntBuffer) with a shared buffer. The return values are undefined if the
-	 * uniform is not found.
-	 * 
-	 * @param name the uniform name
-	 * @return a newly created int[] array with 2 elements; e.g. (x, y) */
-	public int[] getUniform2i(String name) {
-		return getUniform2i(getUniformLocation(name));
-	}
-
-	/** A convenience method to retrieve an ivec3 uniform; for maximum
-	 * performance and memory efficiency you should use getUniform(String,
-	 * IntBuffer) with a shared buffer.
-	 * 
-	 * @param loc the name of the uniform
-	 * @return a newly created int[] array with 3 elements; e.g. (x, y, z) */
-	public int[] getUniform3i(int loc) {
-		IntBuffer buf = uniformi(loc);
-		return new int[] { buf.get(0), buf.get(1), buf.get(2) };
-	}
-
-	/** A convenience method to retrieve an ivec3 uniform; for maximum
-	 * performance and memory efficiency you should use getUniform(String,
-	 * IntBuffer) with a shared buffer. The return values are undefined if the
-	 * uniform is not found.
-	 * 
-	 * @param name the name of the uniform
-	 * @return a newly created int[] array with 3 elements; e.g. (x, y, z) */
-	public int[] getUniform3i(String name) {
-		return getUniform3i(getUniformLocation(name));
-	}
-
-	/** A convenience method to retrieve an ivec4 uniform; for maximum
-	 * performance and memory efficiency you should use getUniform(String,
-	 * IntBuffer) with a shared buffer.
-	 * 
-	 * @param loc the location of the uniform
-	 * @return a newly created int[] array with 2 elements; e.g. (r, g, b, a) */
-	public int[] getUniform4i(int loc) {
-		IntBuffer buf = uniformi(loc);
-		return new int[] { buf.get(0), buf.get(1), buf.get(2), buf.get(3) };
-	}
-	
-	/** A convenience method to retrieve an ivec4 uniform; for maximum
-	 * performance and memory efficiency you should use getUniform(String,
-	 * IntBuffer) with a shared buffer. The return values are undefined if the
-	 * uniform is not found.
-	 * 
-	 * @param name the name of the uniform
-	 * @return a newly created int[] array with 2 elements; e.g. (r, g, b, a) */
-	public int[] getUniform4i(String name) {
-		return getUniform4i(getUniformLocation(name));
-	}
+//	/** A convenience method to retrieve an ivec3 uniform; for maximum
+//	 * performance and memory efficiency you should use getUniform(String,
+//	 * IntBuffer) with a shared buffer. The return values are undefined if the
+//	 * uniform is not found.
+//	 * 
+//	 * @param name the name of the uniform
+//	 * @return a newly created int[] array with 3 elements; e.g. (x, y, z) */
+//	public int[] getUniform3i(String name) {
+//		return getUniform3i(getUniformLocation(name));
+//	}
+//
+//	/** A convenience method to retrieve an ivec4 uniform; for maximum
+//	 * performance and memory efficiency you should use getUniform(String,
+//	 * IntBuffer) with a shared buffer.
+//	 * 
+//	 * @param loc the location of the uniform
+//	 * @return a newly created int[] array with 2 elements; e.g. (r, g, b, a) */
+//	public int[] getUniform4i(int loc) {
+//		IntBuffer buf = uniformi(loc);
+//		return new int[] { buf.get(0), buf.get(1), buf.get(2), buf.get(3) };
+//	}
+//	
+//	/** A convenience method to retrieve an ivec4 uniform; for maximum
+//	 * performance and memory efficiency you should use getUniform(String,
+//	 * IntBuffer) with a shared buffer. The return values are undefined if the
+//	 * uniform is not found.
+//	 * 
+//	 * @param name the name of the uniform
+//	 * @return a newly created int[] array with 2 elements; e.g. (r, g, b, a) */
+//	public int[] getUniform4i(String name) {
+//		return getUniform4i(getUniformLocation(name));
+//	}
 	
 	/** A convenience method to retrieve a float uniform. 
 	 * 
@@ -838,9 +854,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformf(int loc, float f) {
 		if (loc==-1) return;
-		main.GameControle.performanceGPU.markCPU_done();
+		main.GameController.performanceGPU.markCPU_done();
 		glUniform1f(loc, f);
-		main.GameControle.performanceGPU.markUNI_done();
+		main.GameController.performanceGPU.markUNI_done();
 	}
 	
 	/**
@@ -851,9 +867,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformf(int loc, float a, float b) {
 		if (loc==-1) return;
-		main.GameControle.performanceGPU.markCPU_done();
+		main.GameController.performanceGPU.markCPU_done();
 		glUniform2f(loc, a, b);
-		main.GameControle.performanceGPU.markUNI_done();
+		main.GameController.performanceGPU.markUNI_done();
 	}
 	
 	/**
@@ -865,9 +881,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformf(int loc, float a, float b, float c) {
 		if (loc==-1) return;
-		main.GameControle.performanceGPU.markCPU_done();
+		main.GameController.performanceGPU.markCPU_done();
 		glUniform3f(loc, a, b, c);
-		main.GameControle.performanceGPU.markUNI_done();
+		main.GameController.performanceGPU.markUNI_done();
 	}
 
 	/**
@@ -880,9 +896,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformf(int loc, float a, float b, float c, float d) {
 		if (loc==-1) return;
-		main.GameControle.performanceGPU.markCPU_done();
+		main.GameController.performanceGPU.markCPU_done();
 		glUniform4f(loc, a, b, c, d);
-		main.GameControle.performanceGPU.markUNI_done();
+		main.GameController.performanceGPU.markUNI_done();
 	}
 
 	/**
@@ -892,9 +908,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformi(int loc, int i) {
 		if (loc==-1) return;
-		main.GameControle.performanceGPU.markCPU_done();
+		main.GameController.performanceGPU.markCPU_done();
 		glUniform1i(loc, i);
-		main.GameControle.performanceGPU.markUNI_done();
+		main.GameController.performanceGPU.markUNI_done();
 	}
 	
 	/**
@@ -905,9 +921,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformi(int loc, int a, int b) {
 		if (loc==-1) return;
-		main.GameControle.performanceGPU.markCPU_done();
+		main.GameController.performanceGPU.markCPU_done();
 		glUniform2i(loc, a, b);
-		main.GameControle.performanceGPU.markUNI_done();
+		main.GameController.performanceGPU.markUNI_done();
 	}
 
 	/**
@@ -919,9 +935,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformi(int loc, int a, int b, int c) {
 		if (loc==-1) return;
-		main.GameControle.performanceGPU.markCPU_done();
+		main.GameController.performanceGPU.markCPU_done();
 		glUniform3i(loc, a, b, c);
-		main.GameControle.performanceGPU.markUNI_done();
+		main.GameController.performanceGPU.markUNI_done();
 	}
 	
 	/**
@@ -934,9 +950,9 @@ public class ShaderProgram {
 	 */
 	public void setUniformi(int loc, int a, int b, int c, int d) {
 		if (loc==-1) return;
-		main.GameControle.performanceGPU.markCPU_done();
+		main.GameController.performanceGPU.markCPU_done();
 		glUniform4i(loc, a, b, c, d);
-		main.GameControle.performanceGPU.markUNI_done();
+		main.GameController.performanceGPU.markUNI_done();
 	}
 	
 	
@@ -1029,35 +1045,26 @@ public class ShaderProgram {
 
 	/** ----- MATRIX SETTERS ----- */
 	
-	public void setUniformMatrix(String name, boolean transpose, Matrix3f m) {
-		setUniformMatrix(getUniformLocation(name), transpose, m);
-	}
+//	public void setUniformMatrix(String name, boolean transpose, Matrix3f m) {
+//		setUniformMatrix(getUniformLocation(name), transpose, m);
+//	}
 	
-	public void setUniformMatrix(String name, boolean transpose, Matrix4f m) {
-		setUniformMatrix(getUniformLocation(name), transpose, m);
-	}
+//	public void setUniformMatrix(String name, boolean transpose, Matrix4f m) {
+//		setUniformMatrix(getUniformLocation(name), transpose, m);
+//	}
 	
-	public void setUniformMatrix(int loc, boolean transpose, Matrix3f m) {
-		if (loc==-1) return;
-		if (fbuf16==null)
-			fbuf16 = BufferUtils.createFloatBuffer(16);
-		fbuf16.clear();
-		m.store(fbuf16);
-		fbuf16.flip();
-		glUniformMatrix3(loc, transpose, fbuf16);
-	}
+//	public void setUniformMatrix(int loc, boolean transpose, Matrix3f m) {
+//		if (loc==-1) return;
+//		if (fbuf16==null)
+//			fbuf16 = BufferUtils.createFloatBuffer(16);
+//		fbuf16.clear();
+//		m.store(fbuf16);
+//		fbuf16.flip();
+//		glUniformMatrix3fv(loc, transpose, fbuf16);
+//	}
 	
-	public void setUniformMatrix(String loc, boolean transpose, org.joml.Matrix4f m){
+	public void setUniformMatrix(String loc, boolean transpose, Matrix4f m){
 		setUniformMatrix(getUniformLocation(loc), transpose, m);
-	}
-	
-	public void setUniformMatrix(int loc, boolean transpose, org.joml.Matrix4f m) {
-		if (loc==-1) return;
-		if (fbuf16==null)
-			fbuf16 = BufferUtils.createFloatBuffer(16);
-		fbuf16.clear();
-		m.get(fbuf16);
-		glUniformMatrix4(loc, transpose, fbuf16);
 	}
 	
 	public void setUniformMatrix(int loc, boolean transpose, Matrix4f m) {
@@ -1065,10 +1072,19 @@ public class ShaderProgram {
 		if (fbuf16==null)
 			fbuf16 = BufferUtils.createFloatBuffer(16);
 		fbuf16.clear();
-		m.store(fbuf16);
-		fbuf16.flip();
-		glUniformMatrix4(loc, transpose, fbuf16);
+		m.get(fbuf16);
+		glUniformMatrix4fv(loc, transpose, fbuf16);
 	}
+	
+//	public void setUniformMatrix(int loc, boolean transpose, Matrix4f m) {
+//		if (loc==-1) return;
+//		if (fbuf16==null) {
+//			fbuf16 = BufferUtils.createFloatBuffer(16);
+//		};		fbuf16.clear();
+//		m.store(fbuf16);
+//		fbuf16.flip();
+//		glUniformMatrix4fv(loc, transpose, fbuf16);
+//	}
 	
 	
 	/** ----- VECTOR SETTERS ----- */

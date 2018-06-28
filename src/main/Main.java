@@ -1,9 +1,6 @@
 package main;
 
-import java.io.File;
-
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
 
@@ -15,29 +12,46 @@ public class Main {
 		debug.Debug.println("* Starting "+TITLE+" v"+VERSION+" *");
 		
 		Fonts.createAllFonts();
-		GameControle gc;
+		GameController gc;
+		Thread gct;
 		boolean err = false;
+		
 		try {
-			gc = new GameControle();
-			gc.startLoop();
+			gc = new GameController();
+			// Using a real thread
+			// TODO: Exception handling
+			// TODO: Debugging
+			
+			gct = new Thread(gc);
+			gct.start();
+			
+			while(true)
+			{
+				TimeUnit.MINUTES.sleep(1);
+			}
 		} catch (Exception e) {
 			debug.Debug.println("FATAL: "+e.toString(), debug.Debug.FATAL);
 			debug.Debug.printException(e);
 			err = true;
 			e.printStackTrace();
 		}
-		Mouse.destroy();
-		Display.destroy();
+		
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
 		if(!err)
-			System.exit(1);
+		{
+			// Indicating that no Exception occurred is 0.
+			// Positive values indicating an Exception.
+			// Set for Linux as it makes more sense for me, but it is not a standard.
+			System.exit(0);
+		}
 	}
 	
-	private static void test(){
+	private static void test() {
 		org.joml.Matrix4f m1 = new org.joml.Matrix4f().perspective(0.4f, 10, 0.001f, 100);
 		org.joml.Matrix4f m2 = new org.joml.Matrix4f().translate(10, 10, 333.3f);
 	

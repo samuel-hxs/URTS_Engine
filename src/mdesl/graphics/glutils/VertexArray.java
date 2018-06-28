@@ -103,7 +103,7 @@ public class VertexArray implements VertexData {
 	}
 	
 	public void bind() {
-		main.GameControle.performanceGPU.markCPU_done();
+		main.GameController.performanceGPU.markCPU_done();
 		int offset = 0;
 		//4 bytes per float
 		int stride = totalNumComponents * 4;
@@ -113,15 +113,17 @@ public class VertexArray implements VertexData {
 			a = attributes[i];
 			buffer.position(offset);
 			glEnableVertexAttribArray(a.location);
-			glVertexAttribPointer(a.location, a.numComponents, false, stride, buffer);			
+			// TODO: Correct buffer stride size
+			int size = 3;
+			glVertexAttribPointer(a.location, size, a.numComponents, false, stride, buffer);			
 			offset += a.numComponents;
 		}
 	}
 	
 	public void draw(int geom, int first) {
-		main.GameControle.performanceGPU.markBUS_done();
+		main.GameController.performanceGPU.markBUS_done();
 		glDrawArrays(geom, first, count);
-		main.GameControle.performanceGPU.markGPU_done();
+		main.GameController.performanceGPU.markGPU_done();
 	}
 	
 	public int getCount() {

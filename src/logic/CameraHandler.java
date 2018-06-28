@@ -192,7 +192,7 @@ public class CameraHandler {
 	}
 	
 	private float getMaxDistToCenter(){
-		return (main.GameControle.getMapSize()/2+main.GameControle.getMapSize()/6)
+		return (main.GameController.getMapSize()/2+main.GameController.getMapSize()/6)
 				* (1-flightHeight/MAX_HEIGHT);
 	}
 	
@@ -322,7 +322,7 @@ public class CameraHandler {
 	 * Updates MAX_HEIGHT so that the whole map can be seen
 	 */
 	public void projectionViewChanged(){
-		float dis = main.GameControle.getMapSize()/2f;
+		float dis = main.GameController.getMapSize()/2f;
 		dis = (float)Math.sqrt(dis*dis*2);
 		
 		MAX_HEIGHT = (float)(dis/Math.tan(Math.toRadians(Settings.fov)));

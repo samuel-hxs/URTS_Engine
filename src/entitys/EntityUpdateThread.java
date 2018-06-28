@@ -36,9 +36,9 @@ public class EntityUpdateThread extends Thread{
 			e.xPos += Math.sin(e.debug1)*e.debug2;
 			e.yPos += Math.cos(e.debug1)*e.debug2;
 			
-			if(Math.abs(e.xPos) > main.GameControle.getMapSize()/2){
+			if(Math.abs(e.xPos) > main.GameController.getMapSize()/2){
 				e.debug1+=Math.PI;}
-			if(Math.abs(e.yPos) > main.GameControle.getMapSize()/2){
+			if(Math.abs(e.yPos) > main.GameController.getMapSize()/2){
 				e.debug1+=Math.PI;}
 			
 			e.zPos = AreaControle.currentArea.getNodeHeight(e.xPos, e.yPos)+1;

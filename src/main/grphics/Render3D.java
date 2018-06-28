@@ -125,9 +125,9 @@ public class Render3D extends SpriteBatch{
 		entitys.startSecondCheck();
 		entitys.startProjection(proj.getProjectionOnly(), camera.getViewMatrix());
 		
-		GL11.glDisable(GL11.GL_BLEND);
+		//GL11.glDisable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		GL11.glAlphaFunc(GL_GREATER, 0.1f);
+		//GL11.glAlphaFunc(GL_GREATER, 0.1f);
 		
 		set3Dmode(true);
 		area.render(this, fcf);

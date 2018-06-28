@@ -192,11 +192,11 @@ public class ScrollBar extends AbstractButton{
 	
 	private int getFocusShine1(boolean b){
 		if(b && alphaState2<1023){
-			alphaState2 += main.GameControle.timePassed*2;
+			alphaState2 += main.GameController.timePassed*2;
 			if(alphaState2>1023)
 				alphaState2 = 1023;
 		}else if(!b && alphaState2>0){
-			alphaState2 -= main.GameControle.timePassed;
+			alphaState2 -= main.GameController.timePassed;
 			if(alphaState2<0)
 				alphaState2 = 0;
 		}
@@ -205,11 +205,11 @@ public class ScrollBar extends AbstractButton{
 	
 	private int getFocusShine2(boolean b){
 		if(b && alphaStateFoc<1023){
-			alphaStateFoc += main.GameControle.timePassed;
+			alphaStateFoc += main.GameController.timePassed;
 			if(alphaStateFoc>1023)
 				alphaStateFoc = 1023;
 		}else if(!b && alphaStateFoc>0){
-			alphaStateFoc -= main.GameControle.timePassed;
+			alphaStateFoc -= main.GameController.timePassed;
 			if(alphaStateFoc<0)
 				alphaStateFoc = 0;
 		}

@@ -51,7 +51,7 @@ public class EntityTickUpdate extends Thread{
 			
 			mark = System.currentTimeMillis();
 			
-			ratio = (float)main.GameControle.getMapSize() / (float)RESOLUTION;
+			ratio = (float)main.GameController.getMapSize() / (float)RESOLUTION;
 			bits.clear();
 			
 			for (int i = ec.getLenght()-1; i >= 0; i--) {
@@ -82,8 +82,8 @@ public class EntityTickUpdate extends Thread{
 	}
 	
 	private boolean check(float x, float y, float rad){
-		int xs = (int)((x+main.GameControle.getMapSize()/2)/ratio);
-		int ys = (int)((y+main.GameControle.getMapSize()/2)/ratio);
+		int xs = (int)((x+main.GameController.getMapSize()/2)/ratio);
+		int ys = (int)((y+main.GameController.getMapSize()/2)/ratio);
 		int u = (int)(rad/ratio);
 		int us = u*u;
 		boolean needed = false;

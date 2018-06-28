@@ -1,14 +1,17 @@
 package main;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 import gui.GuiControle;
 import logic.CameraHandler;
 import main.grphics.Render3D;
 import mdesl.graphics.Color;
 import mdesl.graphics.SpriteBatch;
 import menu.FontRenderer;
+import utility.Window;
 
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
 import debug.Timing;
@@ -18,7 +21,7 @@ import entitys.EntityTickUpdate;
 import area.AreaControle;
 import area.AreaPainter;
 
-public class GameControle implements Runnable{
+public class GameController implements Runnable {
 
 	private DisplayHandler display;
 	private InputHandler input;
@@ -44,18 +47,27 @@ public class GameControle implements Runnable{
 	private debug.PerformanceMonitor performanceC;
 	public static debug.PerformanceM_GPU performanceGPU;
 	
+	private Window window;
+	
 	private static int mapSize = 200;
 	
-	public GameControle() throws Exception{
-		input = new InputHandler();
-		display = new DisplayHandler(){
-			@Override
-			protected void wasResized(int w, int h) {
-				if(spriteBatch != null)
-					spriteBatch.resize(w, h);
-				input.setDispSize(w, h);
-			}
-		};
+	// TODO: Set specific exceptions
+	// TODO: Check for GLFW init success befor open ing a window.
+	public GameController() throws Exception {
+		
+		
+	}
+	
+	public void init() throws Exception {
+		initGLFW();
+		
+		window = new Window();
+		display = window.getDisplayHandler();
+		input = window.getInputHandler();
+		
+		// TODO: Abstraction for encapsulation
+		GL.createCapabilities();
+		
 		runtime = Runtime.getRuntime();
 		
 		FontRenderer.init();
@@ -74,9 +86,11 @@ public class GameControle implements Runnable{
 		render3d = new Render3D(cameraHandler, entitys, area);
 		spriteBatch = render3d;
 		
-		display.setSize(Settings.displWith, Settings.displHeight, !true);
-		Mouse.create();
-		Mouse.setGrabbed(true);
+		int dwidth = Settings.displWith;
+		int dheight = Settings.displHeight;
+		display.setSize(dwidth, dheight, !true);
+
+		// TODO mouse grabbing
 		
 		gui = new GuiControle();
 		hli = new HigherLevelInput(input, cameraHandler);
@@ -91,17 +105,32 @@ public class GameControle implements Runnable{
 		////////////TEST
 		gui.addMenu(new editor.MeshEditor());
 		gui.addMenu(new editor.EntityEditor(1500, 50, entitys));
-		
 	}
 	
-	public void startLoop(){
-		lastTime = System.currentTimeMillis();
-		run();
-	}
+	private void initGLFW() throws IllegalStateException {
+		GLFWErrorCallback.createPrint(System.err).set();
 
+		// Initialize GLFW. Most GLFW functions will not work before doing this.
+		if ( !glfwInit() ) {
+			throw new IllegalStateException("Unable to initialize GLFW");
+		}
+	}
+	
 	@Override
 	public void run() {
-		while(!input.escPressed){
+		try {
+			init();
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Silent failure!");
+			return;
+			// TODO: No silence
+		}
+		
+		lastTime = System.currentTimeMillis();
+		
+		while(!input.escPressed) {
 			performanceS.start();
 			performanceC.start();
 			performanceGPU.start();
@@ -121,7 +150,6 @@ public class GameControle implements Runnable{
 			performanceC.mark("GUI-Update");
 			
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-			GL11.glLoadIdentity();
 			spriteBatch.begin();
 			
 			/*String inp = input.getCurrentInput();
@@ -147,11 +175,12 @@ public class GameControle implements Runnable{
 			
 			spriteBatch.setColor(Color.WHITE);
 			hli.paint(spriteBatch);
+			
 			String fps = "FPS "+Timing.getFps()[1];
 			if(fps.length()>8)fps = fps.substring(0,8);
 			
 			if(Settings.debugOnScreenZoom)spriteBatch.setScale(2);
-			if(Settings.debugOnScreen){
+			if(Settings.debugOnScreen) {
 				font14.render(spriteBatch, fps+" L:"+debug.FrameStatistics.drawMesh+
 						" E:"+debug.FrameStatistics.entitysPainted+" F:"+debug.FrameStatistics.entityFOW, 3, 14);
 				font14.render(spriteBatch, "RAM: "+generateRAM(), 3, 24);
@@ -163,9 +192,10 @@ public class GameControle implements Runnable{
 					performanceC.draw(3, 64, spriteBatch, font14);
 				if(Settings.debugComplex == 3)
 					performanceGPU.draw(3, 64, spriteBatch, font14);
-			}else{
+			} else {
 				font14.render(spriteBatch, fps, 3, 14);
 			}
+			
 			spriteBatch.setScale(1);
 			spriteBatch.end();
 			debug.Timing.markFpsTh(System.nanoTime()-t);
@@ -173,11 +203,12 @@ public class GameControle implements Runnable{
 			performanceC.mark("R. Gui");
 			
 			performanceGPU.markCPU_done();
-			Display.update();
+
+			window.update();
+			
 			performanceS.mark("Display");
 			performanceC.mark("Display");
 			
-			Display.sync(60);//TODO FPS
 			debug.Timing.markFps(System.nanoTime()-t);
 			performanceGPU.markSleep_done();
 			

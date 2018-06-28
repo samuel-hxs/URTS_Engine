@@ -67,11 +67,11 @@ public abstract class Button extends AbstractButton{
 	
 	private int getFocusShine(boolean b){
 		if(b && focusShine<1023){
-			focusShine += main.GameControle.timePassed;
+			focusShine += main.GameController.timePassed;
 			if(focusShine>1023)
 				focusShine = 1023;
 		}else if(!b && focusShine>0){
-			focusShine -= main.GameControle.timePassed;
+			focusShine -= main.GameController.timePassed;
 			if(focusShine<0)
 				focusShine = 0;
 		}

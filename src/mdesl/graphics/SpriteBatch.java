@@ -40,11 +40,8 @@ import mdesl.graphics.glutils.VertexAttrib;
 import mdesl.graphics.glutils.VertexData;
 import mdesl.util.MathUtil;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector2f;
 
 import main.grphics.Render3D;
 
@@ -143,8 +140,8 @@ public class SpriteBatch {
 	}
 	
 	public Matrix4f getCombinedMatrix() {
-		Matrix4f.mul(Matrix4f.transpose(projMatrix, transpositionPool), 
-				viewMatrix, projViewMatrix);
+		//Matrix4f.mul(Matrix4f.transpose(projMatrix, transpositionPool), viewMatrix, projViewMatrix);
+		projMatrix.transpose(transpositionPool);
 		return projViewMatrix;
 	}
 	
@@ -450,9 +447,9 @@ public class SpriteBatch {
 
 	public void render(VertexData d, Texture t) {
 		if (t != null && t != boundTexture){
-			main.GameControle.performanceGPU.markCPU_done();
+			main.GameController.performanceGPU.markCPU_done();
 			t.bind();
-			main.GameControle.performanceGPU.markUNI_done();
+			main.GameController.performanceGPU.markUNI_done();
 			boundTexture = t;
 		}
 		d.bind();

@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector4f;
 
 import entitys.CollisionFreeEntityIterator;
 import entitys.Entity;
@@ -39,7 +39,7 @@ public class FogOfWar {
 	
 	public static boolean renderFogOfWar = true;
 	
-	public FogOfWar() throws Exception{
+	public FogOfWar() throws Exception {
 		fowShader = new ShaderProgram("res/sha/fow", ATTRIBUTES);
 		buffer = new VertexArray(6000, ATTRIBUTES);
 		tex = new Texture(utility.ResourceLoader.loadResource("res/ima/map/fow.png"));
@@ -79,7 +79,7 @@ public class FogOfWar {
 			buffer.setCount(0);
 		}
 		
-		drawArea(0, 0, (0.5f*main.GameControle.getMapSize())*1.1f, ZERO_PLAIN-6);
+		drawArea(0, 0, (0.5f*main.GameController.getMapSize())*1.1f, ZERO_PLAIN-6);
 		
 		GL11.glDisable(GL11.GL_ALPHA_TEST);
 		fowShader.setUniformf(U_MODE, 0);

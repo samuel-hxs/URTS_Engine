@@ -45,10 +45,6 @@ import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
 import mdesl.graphics.ITexture;
 import mdesl.graphics.Texture;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GLContext;
-
 /**
  * A very thin wrapper around OpenGL Frame Buffer Objects, intended for
  * 2D purposes. This uses GL_FRAMEBUFFER_EXT for GL 2.1 compatibility.
@@ -57,8 +53,10 @@ import org.lwjgl.opengl.GLContext;
  */
 public class FrameBuffer implements ITexture {
 	
+	// TODO: OpenGL functionality checks with GLFW3
 	public static boolean isSupported() {
-		return GLContext.getCapabilities().GL_EXT_framebuffer_object;
+		// return GLContext.getCapabilities().GL_EXT_framebuffer_object;
+		return false;
 	}
 	
 	/** The ID of the FBO in use */
@@ -66,11 +64,12 @@ public class FrameBuffer implements ITexture {
 	protected Texture texture;
 	protected boolean ownsTexture;
 	
-	FrameBuffer(Texture texture, boolean ownsTexture) throws LWJGLException {
+	// TODO: Better Exceptions
+	FrameBuffer(Texture texture, boolean ownsTexture) throws Exception {
 		this.texture = texture;
 		this.ownsTexture = ownsTexture;
 		if (!isSupported()) {
-			throw new LWJGLException("FBO extension not supported in hardware");
+			throw new Exception("FBO extension not supported in hardware");
 		}
 		texture.bind();
 		id = glGenFramebuffersEXT();
@@ -81,7 +80,7 @@ public class FrameBuffer implements ITexture {
 		if (result!=GL_FRAMEBUFFER_COMPLETE) {
 			glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
 			glDeleteFramebuffers(id);
-			throw new LWJGLException("exception "+result+" when checking FBO status");
+			throw new Exception("exception "+result+" when checking FBO status");
 		}
 		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
 	}
@@ -94,7 +93,8 @@ public class FrameBuffer implements ITexture {
 	 * @param texture the texture to use
 	 * @throws LWJGLException if the framebuffer was not initialized correctly
 	 */
-	public FrameBuffer(Texture texture) throws LWJGLException {
+	// TODO: Better Exceptions
+	public FrameBuffer(Texture texture) throws Exception {
 		this(texture, false);
 	}
 	
@@ -106,15 +106,16 @@ public class FrameBuffer implements ITexture {
 	 * @param wrap
 	 * @throws LWJGLException
 	 */
-	public FrameBuffer(int width, int height, int filter, int wrap) throws LWJGLException {
+	// TODO: Better Excptions
+	public FrameBuffer(int width, int height, int filter, int wrap) throws Exception {
 		this(new Texture(width, height, filter, wrap), true);
 	}
 	
-	public FrameBuffer(int width, int height, int filter) throws LWJGLException {
+	public FrameBuffer(int width, int height, int filter) throws Exception {
 		this(width, height, filter, Texture.DEFAULT_WRAP);
 	}
 	
-	public FrameBuffer(int width, int height) throws LWJGLException {
+	public FrameBuffer(int width, int height) throws Exception {
 		this(width, height, Texture.DEFAULT_FILTER, Texture.DEFAULT_WRAP);
 	}
 	
@@ -149,9 +150,11 @@ public class FrameBuffer implements ITexture {
 	 * Unbinds the FBO and resets glViewport to the display size.
 	 */
 	public void end() {
-		if (id==0)
+		if (id==0) {
 			return;
-		glViewport(0, 0, Display.getWidth(), Display.getHeight());
+		}
+		// TODO: resize OpenGL Viewport
+		//glViewport(0, 0, window.getWidth(), window.getHeight());
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 	}
 	

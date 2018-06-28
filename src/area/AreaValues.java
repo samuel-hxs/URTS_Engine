@@ -20,7 +20,7 @@ public class AreaValues {
 	public final int arraySize;
 	
 	public AreaValues(){
-		arraySize = main.GameControle.getMapSize()*DOTS_PER_SQUARE+2;
+		arraySize = main.GameController.getMapSize()*DOTS_PER_SQUARE+2;
 		arrayOffset = arraySize/2;
 		
 		texIntensity = new byte[arraySize+1][arraySize+1][3];

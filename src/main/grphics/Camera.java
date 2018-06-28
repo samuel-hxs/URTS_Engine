@@ -80,7 +80,7 @@ public class Camera {
 	}
 	
 	private static float smooth(float o, float a, float speed){
-		speed *= main.GameControle.timePassed;
+		speed *= main.GameController.timePassed;
 		
 		if(o<a){
 			o += speed;

@@ -30,7 +30,7 @@
  */
 package mdesl.util;
 
-import org.lwjgl.util.vector.Matrix4f;
+import org.joml.Matrix4f;
 
 /**
  * Math utilities; adapted from LibGDX's vector classes for use with LWJGL Vector utilities
@@ -94,22 +94,22 @@ public class MathUtil {
 		float ty = -(top + bottom) / (top - bottom);
 		float tz = -(far + near) / (far - near);
 
-		m.m00 = x_orth;
-		m.m10 = 0;
-		m.m20 = 0;
-		m.m30 = 0;
-		m.m01 = 0;
-		m.m11 = y_orth;
-		m.m21 = 0;
-		m.m31 = 0;
-		m.m02 = 0;
-		m.m12 = 0;
-		m.m22 = z_orth;
-		m.m32 = 0;
-		m.m03 = tx;
-		m.m13 = ty;
-		m.m23 = tz;
-		m.m33 = 1;
+		m.m00(x_orth);
+		m.m10(0);
+		m.m20(0);
+		m.m30(0);
+		m.m01(0);
+		m.m11(y_orth);
+		m.m21(0);
+		m.m31(0);
+		m.m02(0);
+		m.m12(0);
+		m.m22(z_orth);
+		m.m32(0);
+		m.m03(tx);
+		m.m13(ty);
+		m.m23(tz);
+		m.m33(1);
 		return m;
 	}
 	
@@ -124,26 +124,26 @@ public class MathUtil {
 	public static Matrix4f setToProjection (Matrix4f m, float near, float far, float fov, float aspectRatio) {
 		if (m==null)
 			m = new Matrix4f();
-		m.setIdentity();
+		m.identity();
 		float l_fd = (float)(1.0 / Math.tan((fov * (Math.PI / 180)) / 2.0));
 		float l_a1 = (far + near) / (near - far);
 		float l_a2 = (2 * far * near) / (near - far);
-		m.m00 = l_fd / aspectRatio;
-		m.m10 = 0;
-		m.m20 = 0;
-		m.m30 = 0;
-		m.m01 = 0;
-		m.m11 = l_fd;
-		m.m21 = 0;
-		m.m31 = 0;
-		m.m02 = 0;
-		m.m12 = 0;
-		m.m22 = l_a1;
-		m.m32 = -1;
-		m.m03 = 0;
-		m.m13 = 0;
-		m.m23 = l_a2;
-		m.m33 = 0;
+		m.m00(l_fd / aspectRatio);
+		m.m10(0);
+		m.m20(0);
+		m.m30(0);
+		m.m01(0);
+		m.m11(l_fd);
+		m.m21(0);
+		m.m31(0);
+		m.m02(0);
+		m.m12(0);
+		m.m22(l_a1);
+		m.m32(-1);
+		m.m03(0);
+		m.m13(0);
+		m.m23(l_a2);
+		m.m33(0);
 		return m;
 	}
 }

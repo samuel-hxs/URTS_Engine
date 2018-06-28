@@ -95,8 +95,8 @@ public class AreaControle {
 				
 				int m = 0;//Distance-Resolution
 				float d = vlp.distance(vp);
-				if(d<(float)main.GameControle.getMapSize()/2.25f) m = 1;
-				if(d<(float)main.GameControle.getMapSize()/4.5f) m = 2;
+				if(d<(float)main.GameController.getMapSize()/2.25f) m = 1;
+				if(d<(float)main.GameController.getMapSize()/4.5f) m = 2;
 				
 				mapRender[i][j][m].render(r3d);
 			}
@@ -113,7 +113,7 @@ public class AreaControle {
 	 * @return The size of one area-Vertex
 	 */
 	public float getVertexResolution(){
-		return (float)main.GameControle.getMapSize()/(float)(edgesPerSide);
+		return (float)main.GameController.getMapSize()/(float)(edgesPerSide);
 	}
 	
 	private class RenderingAreaUntility{

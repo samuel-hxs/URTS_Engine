@@ -65,7 +65,6 @@ import java.nio.ByteBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLContext;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 
@@ -92,8 +91,10 @@ public class Texture implements ITexture {
         return (n & -n) == n;
     }
     
+    // TODO: implement OpenGL checks used with GLFW3
     public static boolean isNPOTSupported() {
-        return GLContext.getCapabilities().GL_ARB_texture_non_power_of_two;
+        //return GLContext.getCapabilities().GL_ARB_texture_non_power_of_two;
+    	return false;
     }
 
 	// Some filters, included here for convenience
@@ -177,8 +178,8 @@ public class Texture implements ITexture {
 		this(pngRef, filter, filter, DEFAULT_WRAP, genMipmap);
 	}
 
-	public Texture(URL pngRef, int minFilter, int magFilter, int wrap,
-			boolean genMipmap) throws IOException {
+	// TODO: OpenGL verweiße entfernen. Und eigene Klasse für GL funktionalität erstellen
+	public Texture(URL pngRef, int minFilter, int magFilter, int wrap, boolean genMipmap) throws IOException {
 		//TODO: npot check
 		InputStream input = null;
 		try {
@@ -187,6 +188,7 @@ public class Texture implements ITexture {
 			
 			width = dec.getWidth();
 			height = dec.getHeight();
+			
 			ByteBuffer buf = BufferUtils.createByteBuffer(4 * width * height);
 			dec.decode(buf, width * 4, PNGDecoder.Format.RGBA);
 			buf.flip();
@@ -267,11 +269,13 @@ public class Texture implements ITexture {
 	}
 
 	public void bind() {
-		if(lastGlobalBind == this)
+		if(lastGlobalBind == this) {
 			return;
+		}
 		
-		if (!valid())
+		if (!valid()) {
 			throw new IllegalStateException("trying to bind a texture that was disposed");
+		}
 		glBindTexture(getTarget(), id);
 		
 		lastGlobalBind = this;

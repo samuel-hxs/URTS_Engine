@@ -17,27 +17,34 @@ public class DebugFrame extends JPanel implements Runnable{
 	
 	private PerformanceMenu per;
 	private TerminalMenu term;
+	private Thread debugThread;
 	
 	private JFrame frame;
-	
+
+	// TODO: Warum nicht veränderbare größe?
+	// TODO: Standart größe und position anpassen.
 	public DebugFrame(){
 		frame = new JFrame("Seypris Debug");
 		frame.setBounds(100,100,400,700);
-		frame.setResizable(false);
-		setBounds(0,0,400,700);
+		
+		// frame.setResizable(false);
+		
+		setBounds(0, 0, 800, 600);
 		setVisible(true);
+		
 		frame.add(this);
 		frame.setVisible(true);
-		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		vt = new VisualisedTerminal();
 		vt.setSize(400, 550);
+		
 		debug.Debug.init(vt);
 		debug.Timing.init();
-		term = new TerminalMenu(0, 0, vt, null);
 		
-		new Thread(this, "DebugPainter").start();
+		term = new TerminalMenu(0, 0, vt, null);
+		debugThread = new Thread(this, "DebugPainter");
+		debugThread.start();
 	}
 
 	@Override
@@ -70,8 +77,9 @@ public class DebugFrame extends JPanel implements Runnable{
 		g.drawString(""+(int)t[2], 110, 630);
 		g.drawString(""+(int)t[3]+"us", 110, 650);
 		
-		if(term != null)
+		if(term != null) {
 			term.paint(g);
+		}
 	}
 
 }

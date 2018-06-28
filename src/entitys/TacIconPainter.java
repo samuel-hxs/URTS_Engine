@@ -30,8 +30,8 @@ public class TacIconPainter {
 	}
 	
 	public void paintTacIcons(CollisionFreeEntityIterator c, SpriteBatch sp){
-		shinyPoint = (double)(System.currentTimeMillis()/60)%main.GameControle.getMapSize()*8-
-				main.GameControle.getMapSize()*4;
+		shinyPoint = (double)(System.currentTimeMillis()/60)%main.GameController.getMapSize()*8-
+				main.GameController.getMapSize()*4;
 		shinyPoint /= 2;
 		
 		sp.getShader().setUniformi("u_mode", 1);
