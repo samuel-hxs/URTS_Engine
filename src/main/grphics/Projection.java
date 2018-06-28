@@ -24,8 +24,7 @@ public class Projection {
 	}
 	
 	public void updateVM(){
-		projectionMatrix = new Matrix4f().perspective((float)Math.toRadians(Settings.fov), aspect,
-				Z_NEAR, Z_FAR_MUL*Settings.renderDist);
+		projectionMatrix = new Matrix4f().perspective((float)Math.toRadians(Settings.fov), aspect,Z_NEAR, Z_FAR_MUL*Settings.renderDist);
 	}
 	
 	public Matrix4f getProjectionOnly(){

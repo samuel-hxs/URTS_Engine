@@ -151,6 +151,7 @@ public class Render3D extends SpriteBatch{
 		
 		setShader(null);
 		updateProjectionView();
+		
 		//3D-GUI
 		cursor.translate = camera.getPosition();
 		cursor.render(this);

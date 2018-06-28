@@ -1,11 +1,17 @@
 package main;
 
 
-import utility.InputEvent;
-import utility.InputListenerKey;
-import utility.Window;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWKeyCallbackI;
 
-public class InputHandler {
+import utility.InputEvent;
+import utility.Window;
+import window.interfaces.IKeyboard;
+import window.interfaces.IMouse;
+import window.interfaces.IWindow;
+import window.interfaces.InputListenerKey;
+
+public class InputHandler implements IMouse, IKeyboard {
 	private boolean[] mouseButtons;
 	public int mouseX;
 	public int mouseY;
@@ -39,7 +45,7 @@ public class InputHandler {
 		currentlyPressed = new InputChar[20];
 	}
 	
-	public void loop() {
+	public void update() {
 //		Keyboard.poll();
 //		while (Keyboard.next()) {
 //			char c = Keyboard.getEventCharacter();
@@ -84,45 +90,7 @@ public class InputHandler {
 	}
 	
 	private void keyPressed(int k, char c, String n) {
-//		if(k == Keyboard.KEY_ESCAPE) {
-//			escPressed = true;
-//			return;
-//		}
 //		
-//		if(k == Keyboard.KEY_LCONTROL || k == Keyboard.KEY_RCONTROL) isContoleDown = true;
-//		if(k == Keyboard.KEY_LMENU || k == Keyboard.KEY_RMENU) isAltDown = true;
-//		if(k == Keyboard.KEY_LSHIFT || k == Keyboard.KEY_RSHIFT) isShiftDown = true;
-//		
-//		if(k == Keyboard.KEY_F12) {
-//			Settings.debugOnScreen = !Settings.debugOnScreen;
-//		}
-//		if(k == Keyboard.KEY_F11) {
-//			Settings.debugComplex = (Settings.debugComplex+1)%4;
-//		}
-//		if(k == Keyboard.KEY_F9) {
-//			Settings.debugOnScreenZoom = !Settings.debugOnScreenZoom;
-//		}
-//		
-//		InputEvent e = new InputEvent(k, c, isContoleDown, isShiftDown, isAltDown);
-//		
-//		if(listener != null){
-//			listener.keyTyped(e);
-//			if(listener != null)
-//				listener.keyPressed(e);
-//			
-//			return;
-//		}else{
-//			keyChars+=c;
-//		}
-//		
-//		for (int i = 0; i < currentlyPressed.length; i++) {
-//			if(currentlyPressed[i] == null){
-//				currentlyPressed[i] = new InputChar(c, k);
-//				return;
-//			}
-//			if(currentlyPressed[i].id == k)
-//				return;
-//		}
 	}
 	
 	private void keyReleased(int k, char c, String n) {
@@ -184,7 +152,7 @@ public class InputHandler {
 	}
 	
 	public void setMouseTo(int x, int y) {
-//		Mouse.setCursorPosition(x, dispHeight-y);
+		window.setCursorPosition(x, dispHeight-y);
 		mouseX = x;
 		mouseY = y;
 	}
@@ -192,7 +160,63 @@ public class InputHandler {
 	public float mouseRelX(){
 		return (float)mouseX/dispWidth;
 	}
+	
 	public float mouseRelY(){
 		return (float)mouseY/dispHeight;
+	}
+
+	@Override
+	public void move() {
+		System.out.println("MouseMoveEvent");
+	}
+
+	@Override
+	public void click() {
+		System.out.println("MouseClickEvent");
+		
+	}
+
+	@Override
+	public void press(long window, int key, int scancode, int action, int mode) {
+		if(key == GLFW.GLFW_KEY_ESCAPE) {
+			escPressed = true;
+			return;
+		}
+		
+		if(key == GLFW.GLFW_KEY_LEFT_CONTROL || key == GLFW.GLFW_KEY_RIGHT_CONTROL) isContoleDown = true;
+			if(key == GLFW.GLFW_KEY_LEFT_ALT || key == GLFW.GLFW_KEY_RIGHT_ALT) isAltDown = true;
+			if(key == GLFW.GLFW_KEY_LEFT_SHIFT || key== GLFW.GLFW_KEY_RIGHT_SHIFT ) isShiftDown = true;
+			
+			if(key == GLFW.GLFW_KEY_F12) {
+				Settings.debugOnScreen = !Settings.debugOnScreen;
+		}
+		if(key == GLFW.GLFW_KEY_F11) {
+			Settings.debugComplex = (Settings.debugComplex+1)%4;
+		}
+		if(key == GLFW.GLFW_KEY_F9) {
+			Settings.debugOnScreenZoom = !Settings.debugOnScreenZoom;
+		}
+		
+		InputEvent e = new InputEvent(key, (char)key, isContoleDown, isShiftDown, isAltDown);
+		
+		if(listener != null){
+			listener.keyTyped(e);
+			if(listener != null)
+				listener.keyPressed(e);
+			
+			return;
+		}
+//		else{
+//			keyChars += c;
+//		}
+	
+//	for (int i = 0; i < currentlyPressed.length; i++) {
+//		if(currentlyPressed[i] == null){
+//			currentlyPressed[i] = new InputChar(c, key);
+//			return;
+//		}
+//		if(currentlyPressed[i].id == key)
+//			return;
+//}
 	}
 }

@@ -15,10 +15,10 @@ public class PicLoader {
 	
 	private List<SingleImage> imas;
 	
-	class SingleImage{
+	class SingleImage {
 		public final String name;
 		public final TextureRegion tex;
-		public SingleImage(String n, TextureRegion t){
+		public SingleImage(String n, TextureRegion t) {
 			name = n;
 			tex = t;
 		}
@@ -26,9 +26,8 @@ public class PicLoader {
 	
 	public static PicLoader pic;
 	
-	public PicLoader(String dir) throws Exception{
+	public PicLoader(String dir) throws Exception {
 		atlas = new Texture(utility.ResourceLoader.loadResource(dir+".png"));
-		
 		imas = new ArrayList<>();
 		
 		FileReader fr = new FileReader(dir+".map");
@@ -36,14 +35,15 @@ public class PicLoader {
 		
 		String s;
 		while ((s = br.readLine()) != null) {
-			if(s.length()<3)
+			if(s.length()<3) {
 				continue;
-			if(s.startsWith("//"))
+			}
+			if(s.startsWith("//")) {
 				continue;
+			}
 			s = s.replace(',', ' ');
 			String[] st = s.split(" ");
-			TextureRegion tr = new TextureRegion(atlas, Integer.parseInt(st[1]), Integer.parseInt(st[2]),
-					Integer.parseInt(st[3]), Integer.parseInt(st[4]));
+			TextureRegion tr = new TextureRegion(atlas, Integer.parseInt(st[1]), Integer.parseInt(st[2]), Integer.parseInt(st[3]), Integer.parseInt(st[4]));
 			imas.add(new SingleImage(st[0], tr));
 		}
 		

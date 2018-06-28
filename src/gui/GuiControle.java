@@ -88,8 +88,9 @@ public class GuiControle {
 		}
 		
 		hli.updateAlways();
-		if(onTop)
+		if(onTop) {
 			hli.update();
+		}
 		
 		iph.mouseLP = false;
 		iph.mouseLR = false;

@@ -1,4 +1,6 @@
-package utility;
+package window.interfaces;
+
+import utility.InputEvent;
 
 public interface InputListenerKey {
 	public void keyPressed(InputEvent e);

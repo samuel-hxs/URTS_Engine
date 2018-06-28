@@ -1,7 +1,7 @@
 package menu;
 
 import utility.InputEvent;
-import utility.InputListenerKey;
+import window.interfaces.InputListenerKey;
 
 public abstract class AdvancedTextEnterField implements InputListenerKey {
 

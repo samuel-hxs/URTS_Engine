@@ -2,6 +2,8 @@ package main;
 
 import java.util.concurrent.TimeUnit;
 
+import org.lwjgl.system.Configuration;
+
 public class Main {
 
 	public static final String TITLE = "Seypris";
@@ -17,6 +19,7 @@ public class Main {
 		boolean err = false;
 		
 		try {
+			// Configuration.DEBUG.set(true);
 			gc = new GameController();
 			// Using a real thread
 			// TODO: Exception handling

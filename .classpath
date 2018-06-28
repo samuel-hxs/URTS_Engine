@@ -6,6 +6,11 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/mnt/data/home/master/dev/java/eclipse/urts_t2/T2/libs/common/PNGDecoder.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="/home/master/Downloads/LWJGL3/lwjgl-opengl-natives-linux.jar"/>
 	<classpathentry kind="lib" path="/home/master/Downloads/LWJGL3/lwjgl-opengl.jar"/>
 	<classpathentry kind="lib" path="/home/master/Downloads/LWJGL3/lwjgl-openal-natives-linux.jar"/>
@@ -15,6 +20,5 @@
 	<classpathentry kind="lib" path="/home/master/Downloads/LWJGL3/lwjgl-glfw.jar"/>
 	<classpathentry kind="lib" path="/home/master/Downloads/LWJGL3/lwjgl.jar"/>
 	<classpathentry kind="lib" path="/home/master/Downloads/LWJGL3/joml-1.9.9.jar"/>
-	<classpathentry kind="lib" path="/home/master/data/dev/java/eclipse/urts_t2/T2/libs/common/PNGDecoder.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

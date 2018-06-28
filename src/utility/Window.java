@@ -7,11 +7,14 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 import main.DisplayHandler;
 import main.InputHandler;
+import window.interfaces.IWindow;
 
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Window {
 	private InputHandler input;
@@ -19,25 +22,12 @@ public class Window {
 	private long window;
 	
 	// TODO: Better throws
-	public Window() throws Exception {
-// TODO FPS
-//		Display.sync(60);
-		
+	public Window() throws Exception {		
 		input = new InputHandler(this);
 		display = new DisplayHandler(this);
-		
-// TODO: How to represent?
-//		{
-//			@Override
-//			protected void wasResized(int w, int h) {
-//				if(spriteBatch != null)
-//					spriteBatch.resize(w, h);
-//				input.setDispSize(w, h);
-//			}
-//		};
 	}
 	
-	private void initGLFW() {
+	private void init() {
 		// Configure GLFW
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
@@ -57,10 +47,19 @@ public class Window {
 		}
 		
 		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
-		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+		glfwSetKeyCallback(window, GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
+			this.input.press(window, key, scancode, action, mods);
+		}));
+		glfwSetMouseButtonCallback(window, GLFWMouseButtonCallback.create((window, button, action, mods) -> {
+			this.input.click();
+		}));
+		// custom
+		glfwSetErrorCallback((error, description) -> {
+			System.err.println("GLFW error [" + Integer.toHexString(error) + "]: " + GLFWErrorCallback.getDescription(description));
 		});
+
+		// easy clean-up
+		//glfwSetErrorCallback(null).free();
 
 		// Get the thread stack and push a new frame
 		try ( MemoryStack stack = stackPush() ) {
@@ -88,23 +87,23 @@ public class Window {
 	
 	public void update() {
 		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
 	public void setResizable(boolean b) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void setVSyncEnabled(boolean b) {
-		// TODO Auto-generated method stub
-		
+		glfwSwapInterval(b ? 1 : 0);
 	}
 
 	public void create() {
-		initGLFW();
+		init();
 		
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(window);
+		
 		// Enable v-sync
 		glfwSwapInterval(1);
 		
@@ -113,13 +112,12 @@ public class Window {
 	}
 
 	public void contextCurrent() {
-		// Make the OpenGL context current
+		// Make the OpenGL co// TODO Auto-generated method stubntext current
 		glfwMakeContextCurrent(window);
 	}
 	
-	public void setTitle(String string) {
-		// TODO Auto-generated method stub
-		
+	public void setTitle(String title) {
+		glfwSetWindowTitle(window, title);
 	}
 
 	public boolean wasResized() {
@@ -128,8 +126,7 @@ public class Window {
 	}
 
 	public boolean isCloseRequested() {
-		// TODO Auto-generated method stub
-		return false;
+		return glfwWindowShouldClose(window);
 	}
 
 	public void destroy() {
@@ -148,8 +145,7 @@ public class Window {
 	}
 
 	public void setSize(int width, int height) {
-		// TODO Auto-generated method stub
-		
+		glfwSetWindowSize(window, width, height);
 	}
 
 	public void setFullscreen(boolean fullscreen) {
@@ -163,5 +159,10 @@ public class Window {
 
 	public InputHandler getInputHandler() {
 		return input;
+	}
+	
+	public void setCursorPosition(int x, int i) {
+		// TODO Auto-generated method stub
+		
 	}
 }

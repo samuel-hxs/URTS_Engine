@@ -153,6 +153,7 @@ public class Texture implements ITexture {
 		id = glGenTextures();
 		this.width = width;
 		this.height = height;
+		
 		bind();
 		
 		setFilter(filter);
@@ -201,6 +202,7 @@ public class Texture implements ITexture {
 			setWrap(wrap);
 			upload(GL_RGBA, buf);
 			
+			// TODO: Update because new Target is 3.3
 			//use EXT since we are targeting 2.0+
 			if (genMipmap) {
 				EXTFramebufferObject.glGenerateMipmapEXT(getTarget());

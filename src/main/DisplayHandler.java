@@ -2,10 +2,12 @@ package main;
 
 import static org.lwjgl.opengl.GL11.glViewport;
 
+import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
+
 import utility.Window;
 
 // TODO: Warum war das hier abstract?
-public class DisplayHandler {
+public class DisplayHandler implements GLFWWindowSizeCallbackI {
 	private Window window;
 	
 	// TODO: Specific Exceptions
@@ -18,9 +20,10 @@ public class DisplayHandler {
 		this.window.setTitle("URTS-Prototype v" + Main.VERSION);
 	}
 	
-	public void loop(){
-		if (window.wasResized())
+	public void update() {
+		if (window.wasResized()) {
 			wasResized();
+		}
 		
 		if(window.isCloseRequested()) {
 			//TODO Exactly what is TODO here?
@@ -32,7 +35,6 @@ public class DisplayHandler {
 	public void setSize(int width, int height, boolean fullscreen) {
 		window.setSize(width, height);
 		window.setFullscreen(fullscreen);
-		//setDisplayMode(width, height, fullscreen);
 	}
 	
 	private void wasResized(){
@@ -43,6 +45,11 @@ public class DisplayHandler {
 		glViewport(0, 0, width, height);
 		
 		//wasResized(width, height);
+	}
+
+	@Override
+	public void invoke(long window, int width, int height) {
+		System.out.println("Window with id '" + window + "' resized to '" + width + "x" + height + "'.");
 	}
 	
 // TODO: Bessere anwendung oder Implementierung

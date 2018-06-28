@@ -36,9 +36,9 @@ public class AreaImages {
 			String[] st = s.split("###");
 			
 			try {
-				tiles.put(Integer.parseInt(st[0]),
-						new TextureRegion(tex, Integer.parseInt(st[1])*32, Integer.parseInt(st[2])*32, 32, 32));
+				tiles.put(Integer.parseInt(st[0]), new TextureRegion(tex, Integer.parseInt(st[1])*32, Integer.parseInt(st[2])*32, 32, 32));
 			} catch (Exception e) {
+				// TODO: What is the error here?
 				debug.Debug.println("Can't Parse Map-Texture: "+st[0], debug.Debug.WARN);
 			}
 		}
