@@ -6,3 +6,12 @@ Copyright (C): Sven T. Schneider 2017-2018
 
 The Seypris(R)-Name and Seypris-Logo are pending Trademarks and belong to Sven T. Schneider and can be used on every copy of the Software except advertising.
 The use of Artwork is allowed for related Projects under the given License, however usage in might be prohibited in non-related ones!
+
+Changes by None
+To get it into Eclipse:
+	Create a workspace or use an exsisting one.
+	Clone the project into the workspace.
+	Add it into the workspace via folder import from inside eclipse
+To update the project
+	Share the project with team and choose git
+	Use the eclipse git interfaces or command line git
