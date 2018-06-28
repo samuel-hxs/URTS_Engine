@@ -96,20 +96,30 @@ public class EntityControle{
 		return lenght;
 	}
 	
+	
 	/**
 	 * Must be called at the start of every Frame-Loop!
 	 */
-	public synchronized void reset(){
+	public void reset(){
 		if(testAmmount > 0){
 			eLTU.waintUntilDone();
+		}
+		resetIntern();
+	}
+	
+	private synchronized void resetIntern(){
+		if(testAmmount > 0){
 			
 			list.clear();
+			Runtime.getRuntime().gc();
 			while (testAmmount>0) {
 				EntityList e = new EntityList();
 				e.test(testAmmount);
 				list.add(e);
 				testAmmount -= EntityList.NUMBER_OF_UNITS;
 			}
+			
+			lenght = list.size();
 		}
 		
 		eLTU.startNewRun();

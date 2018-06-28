@@ -43,6 +43,7 @@ public abstract class MoveMenu extends AbstractMenu{
 
 	@Override
 	public boolean mouseMoved(int x, int y) {
+		update();
 		if(isDragged){
 			if(x != dragX){
 				xPos += x-dragX;
@@ -55,6 +56,8 @@ public abstract class MoveMenu extends AbstractMenu{
 		}
 		return super.mouseMoved(x, y);
 	}
+	
+	protected void update(){}
 	
 	@Override
 	public void leftClicked(int x, int y) {

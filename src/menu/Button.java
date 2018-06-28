@@ -14,6 +14,8 @@ public abstract class Button extends AbstractButton{
 	private int focOffsetY;
 	private TextureRegion stateDis;
 	
+	public TextureRegion additionalImage;
+	
 	private String text;
 	private int textOff;
 	private String secondLine;
@@ -61,8 +63,11 @@ public abstract class Button extends AbstractButton{
 			if(fs>0){
 				sp.setColor(new Color(255,255,255,fs/4));
 				sp.draw(stateFoc, xPos+xOff-focOffsetX, yPos+yOff-focOffsetY);
+				sp.setColor(Color.WHITE);
 			}
 		}
+		if(additionalImage != null)
+			sp.draw(additionalImage, xPos+xOff, yPos+yOff);
 	}
 	
 	private int getFocusShine(boolean b){

@@ -27,12 +27,14 @@ public class Entity {
 	
 	public Entity3DModel model;
 	
+	public static float debugStatic = 2;
+	
 	public Entity(int modelID){
-		xPos = (float)Math.random()*200-100;
-		yPos = (float)Math.random()*200-100;
+		xPos = (float)(Math.random()-0.5)*main.GameControle.getMapSize();
+		yPos = (float)(Math.random()-0.5)*main.GameControle.getMapSize();
 		
 		debug1 = (float)Math.random()*50;
-		debug2 = (float)Math.random()*0.02f;
+		debug2 = (float)Math.random()*debugStatic*0.01f;
 		
 		zPos = 1;
 		

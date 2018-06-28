@@ -82,7 +82,7 @@ public class DataField extends AbstractButton{
 		
 		if(isActive && (System.currentTimeMillis()/500)%2 == 0){
 			sp.setColor(textColor);
-			sp.draw(line, xPos+xOff+8+font.getStringWidth(adf.text.substring(0, adf.tebpos))+1,
+			sp.draw(line, xPos+xOff+8+font.getStringWidthSpecial(adf.text.substring(0, adf.tebpos), 'l')+1,
 					yPos+yOff+4, 1, 12);
 		}
 		

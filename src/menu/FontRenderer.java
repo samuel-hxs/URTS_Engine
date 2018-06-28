@@ -38,7 +38,7 @@ public class FontRenderer {
 		public int getDistanceTo(char c){
 			if(distanceTo.containsKey(c))
 				return distanceTo.get(c);
-			return distanceTo.get('a');
+			return distanceTo.get('?');
 		}
 	}
 	
@@ -76,6 +76,23 @@ public class FontRenderer {
 			return gl.getDistanceTo('a');
 		}
 		return x+x/(s.length()-1);
+	}
+	
+	public int getStringWidthSpecial(String s, char follow){
+		int x = 0;
+		if(s == null)
+			return 0;
+		if(s.length() == 0)
+			return 0;
+		Glyph gl = null;
+		for (int i = 0; i < s.length(); i++) {
+			gl = glyphs.get(s.charAt(i));
+			if(gl == null)
+				gl = glyphs.get('?');
+			if(i < s.length()-1)
+				x+=gl.getDistanceTo(s.charAt(i+1));
+		}
+		return x+gl.getDistanceTo(follow);
 	}
 	
 	public int getStringHeight(){

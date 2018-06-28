@@ -1,5 +1,7 @@
 package area;
 
+import java.io.IOException;
+
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -42,6 +44,11 @@ public class AreaControle {
 		currentArea = this;
 	}
 	
+	public void loadMapTexure(String dir) throws IOException{
+		mapTex.dispose();
+		mapTex = new Texture(utility.ResourceLoader.loadResource(dir));
+	}
+	
 	public void prepareMap(){
 		final int n = edgesPerSide / AreaRender.size_raw;
 		tiles = n;
@@ -76,6 +83,10 @@ public class AreaControle {
 		return area.getHeight(x, y);
 	}
 	
+	public float getTextureComponent(float x, float y, int p){
+		return area.getTextureComponent(x, y, p);
+	}
+	
 	public void render(Render3D r3d, FrustumCullingFilter fcf){
 		Vector3f vp = new Vector3f(r3d.getCamera().pos);
 		Vector3f vlp = new Vector3f();
@@ -96,13 +107,14 @@ public class AreaControle {
 				int m = 0;//Distance-Resolution
 				float d = vlp.distance(vp);
 				if(d<(float)main.GameControle.getMapSize()/2.25f) m = 1;
-				if(d<(float)main.GameControle.getMapSize()/4.5f) m = 2;
+				if(d<(float)main.GameControle.getMapSize()/5.5f) m = 2;
 				
 				mapRender[i][j][m].render(r3d);
 			}
 		}
 		
 		shader.getShader().setUniformi(LandscapeShader.U_TEXTURE_MODE, 0);
+		shader.changeSettingsToObjectRender();
 	}
 	
 	public int getEdgesPerSide(){

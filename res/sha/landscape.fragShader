@@ -67,7 +67,8 @@ vec4 calcPointLight(Light light, vec3 position, vec3 normal, vec4 texCol)
 	vec3 reflected_light = normalize(reflect(from_light_source, normal));
 	float specularFactor = max(dot(camera_direction, reflected_light), 0.0);
 	specularFactor = pow(specularFactor, material.specularPower);
-	specColor = texCol * specularFactor * material.reflectance * light.reflectanceMod * vec4(light.color, 1.0);
+	specColor = texCol * specularFactor * material.reflectance * light.reflectanceMod * 
+	vec4(light.color*material.specularColor, 1.0);
 	
 	return specColor / attenuationInv;
 }

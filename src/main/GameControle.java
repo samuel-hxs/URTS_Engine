@@ -1,12 +1,14 @@
 package main;
 
 import gui.GuiControle;
+import gui.ScreenCapture;
 import logic.CameraHandler;
 import main.grphics.Render3D;
 import mdesl.graphics.Color;
 import mdesl.graphics.SpriteBatch;
 import menu.FontRenderer;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -16,7 +18,6 @@ import entitys.EntityControle;
 import entitys.EntityThreadTimer;
 import entitys.EntityTickUpdate;
 import area.AreaControle;
-import area.AreaPainter;
 
 public class GameControle implements Runnable{
 
@@ -46,6 +47,8 @@ public class GameControle implements Runnable{
 	
 	private static int mapSize = 200;
 	
+	private FrameBufferHandler fbh;
+	
 	public GameControle() throws Exception{
 		input = new InputHandler();
 		display = new DisplayHandler(){
@@ -54,6 +57,11 @@ public class GameControle implements Runnable{
 				if(spriteBatch != null)
 					spriteBatch.resize(w, h);
 				input.setDispSize(w, h);
+				try {
+					fbh.resize(w, h);
+				} catch (LWJGLException e) {
+					debug.Debug.printException(e);
+				}
 			}
 		};
 		runtime = Runtime.getRuntime();
@@ -61,8 +69,10 @@ public class GameControle implements Runnable{
 		FontRenderer.init();
 		font14 = FontRenderer.getFont("MONO_14");
 		
-		GL11.glClearColor(0.0f,  0.0f, 0.2f, 1);
+		GL11.glClearColor(0.0f,  0.0f, 0.2f, 1f);
 		GL11.glClearDepth(1.0f);
+		
+		fbh = new FrameBufferHandler();
 		
 		PicLoader.pic = new PicLoader("res/ima/gui/gui");
 		
@@ -71,7 +81,7 @@ public class GameControle implements Runnable{
 		area = new AreaControle();
 		
 		cameraHandler = new CameraHandler(area);
-		render3d = new Render3D(cameraHandler, entitys, area);
+		render3d = new Render3D(cameraHandler, entitys, area, fbh);
 		spriteBatch = render3d;
 		
 		display.setSize(Settings.displWith, Settings.displHeight, !true);
@@ -90,8 +100,8 @@ public class GameControle implements Runnable{
 		
 		////////////TEST
 		gui.addMenu(new editor.MeshEditor());
-		gui.addMenu(new editor.EntityEditor(1500, 50, entitys));
-		
+		gui.addMenu(new editor.EntityEditor(1500, 500, entitys));
+		gui.addMenu(new editor.map.MapEditor(1500, 50, area));
 	}
 	
 	public void startLoop(){
@@ -142,8 +152,10 @@ public class GameControle implements Runnable{
 			render3d.render3D();
 			performanceS.mark("Render 3D");
 			
-			spriteBatch.setShader(null);
+			fbh.drawMain(spriteBatch);
+			performanceC.mark("Swap Main");
 			gui.draw(spriteBatch);
+			spriteBatch.flush();
 			
 			spriteBatch.setColor(Color.WHITE);
 			hli.paint(spriteBatch);

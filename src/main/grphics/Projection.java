@@ -9,7 +9,7 @@ public class Projection {
 	private Matrix4f projectionMatrix;
 	
 	private static final float Z_NEAR = 0.01f;
-	private static final float Z_FAR_MUL = 50f;
+	private static final float Z_FAR = 900f;
 	
 	private float aspect;
 	
@@ -25,7 +25,7 @@ public class Projection {
 	
 	public void updateVM(){
 		projectionMatrix = new Matrix4f().perspective((float)Math.toRadians(Settings.fov), aspect,
-				Z_NEAR, Z_FAR_MUL*Settings.renderDist);
+				Z_NEAR, Z_FAR);
 	}
 	
 	public Matrix4f getProjectionOnly(){
