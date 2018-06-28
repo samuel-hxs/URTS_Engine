@@ -30,8 +30,8 @@ public class AreaRender {
 		superResolution = sp;
 	}
 	
-	public void update(Texture t){
-		tex = t;
+	public void update(Texture tr){
+		tex = tr;
 		final float resol = area.getVertexResolution()/(float)superResolution;
 		
 		float[] x = new float[4];
@@ -44,6 +44,8 @@ public class AreaRender {
 		
 		int xP = xPos*superResolution;
 		int yP = yPos*superResolution;
+		
+		float[][] t = new float[4][3];
 		
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
@@ -64,21 +66,28 @@ public class AreaRender {
 				float v = resol*(yP+j-size/2)*area.textureRepeat;
 				float v2 = resol*(yP+1+j-size/2)*area.textureRepeat;
 				
-				vertexPoint(0, x, y, z, w, u, v);
-				vertexPoint(1, x, y, z, w, u2, v);
-				vertexPoint(2, x, y, z, w, u, v2);
+				for (int k = 0; k < 3; k++) {
+					t[0][k] = area.getTextureComponent(resol*(xP+i-size/2), resol*(yP+j-size/2), k);
+					t[1][k] = area.getTextureComponent(resol*(xP+1+i-size/2), resol*(yP+j-size/2), k);
+					t[2][k] = area.getTextureComponent(resol*(xP+i-size/2), resol*(yP+1+j-size/2), k);
+					t[3][k] = area.getTextureComponent(resol*(xP+1+i-size/2), resol*(yP+1+j-size/2), k);
+				}
 				
-				vertexPoint(1, x, y, z, w, u2, v);
-				vertexPoint(3, x, y, z, w, u2, v2);
-				vertexPoint(2, x, y, z, w, u, v2);
+				vertexPoint(0, x, y, z, w, u, v, t);
+				vertexPoint(1, x, y, z, w, u2, v, t);
+				vertexPoint(2, x, y, z, w, u, v2, t);
+				
+				vertexPoint(1, x, y, z, w, u2, v, t);
+				vertexPoint(3, x, y, z, w, u2, v2, t);
+				vertexPoint(2, x, y, z, w, u, v2, t);
 			}
 		}
 		
 		data.flip();
 	}
 	
-	private void vertexPoint(int p, float[] x, float[] y, float[] z, Vector3f normal, float u, float v){
-		data.put(x[p]).put(y[p]).put(z[p]).put(0).put(5.48f).put(2.02f).put(u).put(v).put(normal.x).put(normal.y).put(normal.z);
+	private void vertexPoint(int p, float[] x, float[] y, float[] z, Vector3f normal, float u, float v, float[][] t){
+		data.put(x[p]).put(y[p]).put(z[p]).put(t[p][0]).put(t[p][1]).put(t[p][2]).put(u).put(v).put(normal.x).put(normal.y).put(normal.z);
 		data.countIncr();
 	}
 	

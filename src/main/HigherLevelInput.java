@@ -63,17 +63,17 @@ public class HigherLevelInput {
 			camera.singleScroll(false);
 		
 		if(s.contains("w"))
-			camera.move(0, Settings.moveSpeedWASD);
+			camera.move(0, Settings.moveSpeedWASD*GameControle.timePassed);
 		if(s.contains("s"))
-			camera.move(0, -Settings.moveSpeedWASD);
+			camera.move(0, -Settings.moveSpeedWASD*GameControle.timePassed);
 		if(s.contains("d"))
-			camera.move(Settings.moveSpeedWASD, 0);
+			camera.move(Settings.moveSpeedWASD*GameControle.timePassed, 0);
 		if(s.contains("a"))
-			camera.move(-Settings.moveSpeedWASD, 0);
+			camera.move(-Settings.moveSpeedWASD*GameControle.timePassed, 0);
 		if(s.contains("y"))
-			camera.moveRot(0, 0, -Settings.moveSpeedWASD);
+			camera.moveRot(0, 0, -Settings.moveSpeedWASD*GameControle.timePassed);
 		if(s.contains("x"))
-			camera.moveRot(0, 0, Settings.moveSpeedWASD);
+			camera.moveRot(0, 0, Settings.moveSpeedWASD*GameControle.timePassed);
 		
 		if(freeCam){
 			if(s.contains(" ")){
@@ -88,19 +88,19 @@ public class HigherLevelInput {
 		
 		if(camera.mouseX<Settings.moveMouseOnEdgeThreshhold){
 			float q = camera.mouseX / Settings.moveMouseOnEdgeThreshhold;
-			camera.move(-Settings.moveSpeedWASD*(1f-q), 0);
+			camera.move(-Settings.moveSpeedWASD*(1f-q)*GameControle.timePassed, 0);
 		}
 		if(camera.mouseX>1f-Settings.moveMouseOnEdgeThreshhold){
 			float q = (1f-camera.mouseX) / (Settings.moveMouseOnEdgeThreshhold);
-			camera.move(Settings.moveSpeedWASD*(1f-q), 0);
+			camera.move(Settings.moveSpeedWASD*(1f-q)*GameControle.timePassed, 0);
 		}
 		if(camera.mouseY<Settings.moveMouseOnEdgeThreshhold){
 			float q = camera.mouseY / Settings.moveMouseOnEdgeThreshhold;
-			camera.move(0, Settings.moveSpeedWASD*(1f-q));
+			camera.move(0, Settings.moveSpeedWASD*(1f-q)*GameControle.timePassed);
 		}
 		if(camera.mouseY>1f-Settings.moveMouseOnEdgeThreshhold){
 			float q = (1f-camera.mouseY) / (Settings.moveMouseOnEdgeThreshhold);
-			camera.move(0, -Settings.moveSpeedWASD*(1f-q));
+			camera.move(0, -Settings.moveSpeedWASD*(1f-q)*GameControle.timePassed);
 		}
 	}
 	

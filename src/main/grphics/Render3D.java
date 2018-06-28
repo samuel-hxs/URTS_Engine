@@ -5,6 +5,7 @@ import area.AreaControle;
 import area.AreaImages;
 import debug.PerformanceMonitor;
 import logic.CameraHandler;
+import main.FrameBufferHandler;
 import main.PicLoader;
 import main.grphics.VertexDataManager.RenderingHints;
 import main.grphics.VertexDataManager.SizeOfVertexArray;
@@ -25,14 +26,13 @@ public class Render3D extends SpriteBatch{
 	private Projection proj;
 	
 	private VertexDataManager vdm;
+	private final FrameBufferHandler fbh;
 	
 	private Camera camera;
 	private final CameraHandler cameraHandler;
 	
 	private Matrix4f currWorldTranslate = null;
 	private FrustumCullingFilter fcf;
-	
-	private AreaImages areaImages;
 	
 	private VertexData3D cursor;
 	
@@ -45,12 +45,13 @@ public class Render3D extends SpriteBatch{
 	
 	private PerformanceMonitor performance;
 	
-	public Render3D(CameraHandler c, EntityControle e, AreaControle a) throws Exception{
+	public Render3D(CameraHandler c, EntityControle e, AreaControle a, FrameBufferHandler f) throws Exception{
 		proj = new Projection();
 		camera = new Camera();
 		vdm = new VertexDataManager();
 		fcf = new FrustumCullingFilter();
-		areaImages = new AreaImages();
+		
+		fbh = f;
 		
 		entityPainter = new EntityPainter();
 		
@@ -125,7 +126,9 @@ public class Render3D extends SpriteBatch{
 		entitys.startSecondCheck();
 		entitys.startProjection(proj.getProjectionOnly(), camera.getViewMatrix());
 		
-		//GL11.glDisable(GL11.GL_BLEND);
+		fbh.startFrame();
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		//GL11.glAlphaFunc(GL_GREATER, 0.1f);
 		
@@ -146,8 +149,13 @@ public class Render3D extends SpriteBatch{
 		
 		//vdm.render(this, true, fcf);
 		
+		fbh.captureFrame(this);
+		performance.mark("Swap Capt.");
+		draw(fbh.getCapture(), 100, 100, 400, 400);
+		GL11.glColorMask(true, true, true, false);
 		fow.renderFOW(this, entitys.getPaintIterator(true));
 		performance.mark("R. FOW");
+		GL11.glColorMask(true, true, true, true);
 		
 		setShader(null);
 		updateProjectionView();
@@ -169,32 +177,6 @@ public class Render3D extends SpriteBatch{
 		super.updateUniforms(program);
 		boundTexture = null;
 		currWorldTranslate = null;
-	}
-	
-	public void prepare(VertexData3D v, int q){
-		TextureRegion tr;
-		tr = areaImages.get(1);
-		v.setTexure(areaImages.tex);
-		Brush3D b = v.getBrush();
-		
-		b.start();
-		
-		for (int i = -10; i <= 10; i++) {
-			for (int j = -10; j <= 10; j++) {
-				b.drawSimplePlane(i, j, 0, 1, -1, utility.GeometryConstants.FACING.UP, tr);
-			}
-		}
-		
-		v.positionForCulling = new Vector3f(0,0,-q);
-		v.radiusForCulling = utility.MathUtility.cubeRadius(20);
-		v.renderingHintGeneral = RenderingHints.ALWAYS;
-		
-		if(q%2 == 1)
-			v.renderingHintGeneral = RenderingHints.TRANSPARENT;
-		
-		v.translate = new Matrix4f().translate(0, 0, -q);
-		
-		b.end();	
 	}
 	
 	private void mkCursor(){

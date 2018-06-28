@@ -120,7 +120,7 @@ public class EntityEditor extends MoveMenu{
 		add(d2);
 		d2.setCanTextEnter(true);
 		
-		DataField amm = new DataField(20, 330, 100){
+		DataField amm = new DataField(20, 370, 100){
 			@Override
 			protected void textEntered(String s) {
 				try {
@@ -135,7 +135,7 @@ public class EntityEditor extends MoveMenu{
 		add(amm);
 		amm.setCanTextEnter(true);
 		
-		Button b = new Button(140, 320, "bb") {
+		Button b = new Button(140, 360, "bb") {
 			@Override
 			protected void isClicked() {
 				debug.Debug.println("***Test-Spawn "+toSpawn+" Units***", debug.Debug.MESSAGE);
@@ -146,6 +146,21 @@ public class EntityEditor extends MoveMenu{
 		add(b);
 		b.setText("Spawn");
 		b.setTextcolor(Button.gray);
+		
+		DataField spe = new DataField(20, 440, 80){
+			@Override
+			protected void textEntered(String s) {
+				try {
+					entitys.Entity.debugStatic = Float.parseFloat(s);
+					textColor = Color.BLACK;
+				} catch (Exception e) {
+					textColor = Color.RED;
+				}
+			}
+		};
+		add(spe);
+		spe.setCanTextEnter(true);
+		spe.setText("2.0");
 		
 		setLoad();
 		
@@ -189,7 +204,9 @@ public class EntityEditor extends MoveMenu{
 		font.render(sp, "Rander-Always-Model (Use sparing!):", 7+xPos, 240+yPos);
 		font.render(sp, "Filename:", 20+xPos, 253+yPos);
 		
-		font.render(sp, "Spawn units:", 7+xPos, 323+yPos);
+		font.render(sp, "Spawn units:", 7+xPos, 363+yPos);
+		
+		font.render(sp, "Unit Speed (Needs respawn):", 7+xPos, 433+yPos);
 	}
 
 }

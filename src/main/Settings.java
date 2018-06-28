@@ -16,7 +16,7 @@ public class Settings {
 	public static int renderDist = 10;
 	
 	public static int scrollDiv = 30;
-	public static float moveSpeedWASD = 1f;
+	public static float moveSpeedWASD = 1f/12f;
 	public static float moveSpeedMMB = 0.1f;
 	public static float moveSpeedMouseOnEdge = 1f;
 	public static float moveMouseOnEdgeThreshhold = 0.01f;

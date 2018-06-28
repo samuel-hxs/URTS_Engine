@@ -30,6 +30,7 @@ public class CameraHandler {
 	private static final float FHD = 3f;
 	
 	private int scrolls;
+	private int scrollTerminater;
 	
 	private float flightHeight = MAX_HEIGHT;
 	private float trueHeight = MAX_HEIGHT;
@@ -65,14 +66,20 @@ public class CameraHandler {
 	}
 	
 	private void sync(boolean scroll){
+		if(scrollTerminater <= 0 && scrolls != 0)
+			scrolls = 0;
 		//Scrolling
 		if(scrolls>0 && scroll){
 			singleScroll(true);
-			scrolls--;
+			scrolls-=main.GameControle.timePassed;
+			if(scrolls<0)scrolls = 0;
+			scrollTerminater-=main.GameControle.timePassed;
 		}
 		if(scrolls<0 && scroll){
 			singleScroll(false);
-			scrolls++;
+			scrolls+=main.GameControle.timePassed;
+			if(scrolls>0)scrolls = 0;
+			scrollTerminater-=main.GameControle.timePassed;
 		}
 		
 		if(scroll){
@@ -197,8 +204,11 @@ public class CameraHandler {
 	}
 	
 	public void scroll(int ammount){
+		ammount *= 12;
 		ammount /= Settings.scrollDiv;
 		scrolls += ammount;
+		
+		scrollTerminater = 200;//Scrolling continues for max. half second
 	}
 	
 	public void singleScroll(boolean up){
@@ -210,10 +220,13 @@ public class CameraHandler {
 		moveToX = v.x+camera.pos.x;
 		moveToY = v.y+camera.pos.y;
 		
+		float scrollSpeed = 0.003f*main.GameControle.timePassed;
+		
+		scrollSpeed += 1;
 		if(up){
-			flightHeight = (flightHeight*100f)/96f;
+			flightHeight = flightHeight*scrollSpeed;
 		}else{
-			flightHeight = (flightHeight*96f)/100f;
+			flightHeight = flightHeight*(1/scrollSpeed);
 		}
 		if(flightHeight>MAX_HEIGHT){
 			flightHeight = MAX_HEIGHT;

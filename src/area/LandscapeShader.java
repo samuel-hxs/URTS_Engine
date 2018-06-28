@@ -66,17 +66,30 @@ public class LandscapeShader {
 		
 		shader.setUniformf(U_CAMERA_POS, r3d.getCamera().pos.x, r3d.getCamera().pos.y, r3d.getCamera().pos.z);
 		
+		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_INTENSITY, 0.51f);
+		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_COLOR, 1, 1, 1);
+		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_POS, 0, 0, 30);
+		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_REFLECTANCE, 1f);
+		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_REFLECTANCE, 1f);
+		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_SPECULAR_POWER, 10.1f);
+		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_SPECULAR_COLOR, 0.9f, 1, 0.9f);
+		
+		shader.setUniformf(U_SKY_LIGHT_DIR, 0, 0, 1);
+		shader.setUniformf(U_SKY_LIGHT_INTENSITY, 1.1f);
+		shader.setUniformf(U_SKY_LIGHT_POWER, 100f);
+	}
+	
+	public void changeSettingsToObjectRender(){
 		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_INTENSITY, 1.51f);
 		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_COLOR, 1, 1, 1);
 		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_POS, 0, 0, 30);
 		shader.setUniformf(U_LIGHT_STRUCT+"1."+U_LIGHT_REFLECTANCE, 1f);
 		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_REFLECTANCE, 1f);
 		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_SPECULAR_POWER, 10.1f);
-		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_SPECULAR_COLOR, 0, 0, 1);
+		shader.setUniformf(U_MATERIAL_STRUCT+"."+U_MATERIAL_SPECULAR_COLOR, 0.9f, 0.9f, 1f);
 		
-		shader.setUniformf(U_SKY_LIGHT_DIR, 0, 0, 1);
-		shader.setUniformf(U_SKY_LIGHT_INTENSITY, 1.1f);
-		shader.setUniformf(U_SKY_LIGHT_POWER, 100f);
+		shader.setUniformf(U_SKY_LIGHT_INTENSITY, 0.6f);
+		shader.setUniformf(U_SKY_LIGHT_POWER, 10f);
 	}
 	
 	public ShaderProgram getShader() {

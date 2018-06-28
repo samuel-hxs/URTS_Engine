@@ -3,6 +3,7 @@ package main;
 import static org.lwjgl.glfw.GLFW.*;
 
 import gui.GuiControle;
+import gui.ScreenCapture;
 import logic.CameraHandler;
 import main.grphics.Render3D;
 import mdesl.graphics.Color;
@@ -11,8 +12,14 @@ import menu.FontRenderer;
 import utility.Window;
 import window.interfaces.IWindow;
 
+<<<<<<< HEAD:src/main/GameController.java
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+=======
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
+>>>>>>> dc75be2321e8bad29bdd7f6fbda930746e60c407:src/main/GameControle.java
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Callback;
@@ -22,7 +29,6 @@ import entitys.EntityControle;
 import entitys.EntityThreadTimer;
 import entitys.EntityTickUpdate;
 import area.AreaControle;
-import area.AreaPainter;
 
 public class GameController implements Runnable, IWindow {
 	private DisplayHandler display;
@@ -50,15 +56,15 @@ public class GameController implements Runnable, IWindow {
 	public static debug.PerformanceM_GPU performanceGPU;
 	
 	private Window window;
-	
+private FrameBufferHandler fbh;	
 	private static int mapSize = 200;
 	
+<<<<<<< HEAD:src/main/GameController.java
 	private Callback debugProc;
 	
 	// TODO: Set specific exceptions
 	// TODO: Check for GLFW init success befor open ing a window.
 	public GameController() throws Exception {
-		
 		
 	}
 	
@@ -74,14 +80,15 @@ public class GameController implements Runnable, IWindow {
 		GL.createCapabilities();
 		debugProc = GLUtil.setupDebugMessageCallback(); // may return null if the debug mode is not available
 		
-		
 		runtime = Runtime.getRuntime();
 		
 		FontRenderer.init();
 		font14 = FontRenderer.getFont("MONO_14");
 		
-		GL11.glClearColor(0.0f,  0.0f, 0.2f, 1);
+		GL11.glClearColor(0.0f,  0.0f, 0.2f, 1f);
 		GL11.glClearDepth(1.0f);
+		
+		fbh = new FrameBufferHandler();
 		
 		PicLoader.pic = new PicLoader("res/ima/gui/gui");
 		
@@ -89,7 +96,7 @@ public class GameController implements Runnable, IWindow {
 		area = new AreaControle();
 		
 		cameraHandler = new CameraHandler(area);
-		render3d = new Render3D(cameraHandler, entitys, area);
+		render3d = new Render3D(cameraHandler, entitys, area, fbh);
 		spriteBatch = render3d;
 		
 		int dwidth = Settings.displWith;
@@ -110,7 +117,8 @@ public class GameController implements Runnable, IWindow {
 		
 		////////////TEST
 		gui.addMenu(new editor.MeshEditor());
-		gui.addMenu(new editor.EntityEditor(1500, 50, entitys));
+		gui.addMenu(new editor.EntityEditor(1500, 500, entitys));
+		gui.addMenu(new editor.map.MapEditor(1500, 50, area));
 	}
 	
 	private void GLFW() throws IllegalStateException {
@@ -175,8 +183,10 @@ public class GameController implements Runnable, IWindow {
 			render3d.render3D();
 			performanceS.mark("Render 3D");
 			
-			spriteBatch.setShader(null);
+			fbh.drawMain(spriteBatch);
+			performanceC.mark("Swap Main");
 			gui.draw(spriteBatch);
+			spriteBatch.flush();
 			
 			spriteBatch.setColor(Color.WHITE);
 			hli.paint(spriteBatch);
@@ -249,8 +259,15 @@ public class GameController implements Runnable, IWindow {
 	@Override
 	public void resize(int width, int height) {
 		if(spriteBatch != null) {
-			spriteBatch.resize(width, height);
+                	spriteBatch.resize(w, h);
 		}
-		input.setDispSize(width, height);
+                
+		input.setDispSize(w, h);                
+		try {
+                                        fbh.resize(w, h);
+                                } catch (LWJGLException e) {
+                                        debug.Debug.printException(e);
+                                }
+
 	}
 }

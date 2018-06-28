@@ -2,6 +2,7 @@ package entitys;
 
 import java.util.BitSet;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A slow updater handling on 500ms tick-rate. Updates renderFOW-Flags etc. 
@@ -105,15 +106,22 @@ public class EntityTickUpdate extends Thread{
 	 * Will lock until the current Run is finished
 	 */
 	public void waintUntilDone(){
-		doneSema.acquireUninterruptibly();
-		doneSema.release();
+		try {
+			while(!doneSema.tryAcquire(30, TimeUnit.MILLISECONDS)){
+				startNewRun();
+			}
+
+			doneSema.release();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
 	 * Starts a new run if not already running
 	 */
 	public void startNewRun(){
-		if(doneSema.availablePermits() > 0)
+		if(doneSema.availablePermits() > 0 && startSmea.availablePermits()<=0)
 			startSmea.release();
 	}
 }
