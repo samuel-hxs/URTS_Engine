@@ -11,19 +11,20 @@ public class FrameStatistics {
 	public static int entitysPainted;
 	public static int entityFOW;
 	
-	public static void markMissed(){
+	public static void markMissed() {
 		missed++;
 		clearMissed = 120;
 	}
 	
-	public static void clear(){
+	public static void clear() {
 		drawMesh = 0;
 		drawSum = 0;
 		entitysPainted = 0;
 		entityFOW = 0;
 		
 		clearMissed--;
-		if(clearMissed == 0)
+		if(clearMissed == 0) {
 			missed = 0;
+		}
 	}
 }

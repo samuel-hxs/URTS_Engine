@@ -74,6 +74,7 @@ public class GameController implements Runnable, IWindow {
 		GL.createCapabilities();
 		debugProc = GLUtil.setupDebugMessageCallback(); // may return null if the debug mode is not available
 		
+		
 		runtime = Runtime.getRuntime();
 		
 		FontRenderer.init();

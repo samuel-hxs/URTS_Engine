@@ -149,7 +149,7 @@ public class Texture implements ITexture {
 	 * @param genMipmaps - whether to generate mipmaps, which requires 
 	 * 		GL_EXT_framebuffer_object (or GL3+) */
 	public Texture(int width, int height, int filter, int wrap) {
-		glEnable(getTarget());
+		//glEnable(getTarget());
 		id = glGenTextures();
 		this.width = width;
 		this.height = height;
@@ -194,7 +194,7 @@ public class Texture implements ITexture {
 			dec.decode(buf, width * 4, PNGDecoder.Format.RGBA);
 			buf.flip();
 			
-			glEnable(getTarget());
+			//glEnable(getTarget());
 			id = glGenTextures();
 
 			bind();

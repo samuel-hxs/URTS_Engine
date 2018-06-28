@@ -55,7 +55,8 @@ public class Window {
 		}));
 		// custom
 		glfwSetErrorCallback((error, description) -> {
-			System.err.println("GLFW error [" + Integer.toHexString(error) + "]: " + GLFWErrorCallback.getDescription(description));
+			debug.Debug.println("GLFW error [" + Integer.toHexString(error) + "]: " + GLFWErrorCallback.getDescription(description));
+			//System.err.println("");
 		});
 
 		// easy clean-up
@@ -150,7 +151,6 @@ public class Window {
 
 	public void setFullscreen(boolean fullscreen) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public DisplayHandler getDisplayHandler() {
@@ -162,7 +162,6 @@ public class Window {
 	}
 	
 	public void setCursorPosition(int x, int i) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 }

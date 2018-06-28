@@ -17,6 +17,8 @@ public class LogSaver extends Thread implements TermPrint{
 	
 	private static final String DIVIDER = "-------------------------------------------";
 	
+	private PerformanceMonitor p1, p2, p3;
+	
 	public LogSaver(){
 		if(singleLog){
 			logFilepath = "log/0-CurrLOG.txt";
@@ -144,8 +146,6 @@ public class LogSaver extends Thread implements TermPrint{
 		}
 		return "[??]";
 	}
-	
-	private PerformanceMonitor p1, p2, p3;
 	
 	public void setShutdownData(PerformanceMonitor p1, PerformanceMonitor p2, PerformanceMonitor p3){
 		this.p1 = p1;
