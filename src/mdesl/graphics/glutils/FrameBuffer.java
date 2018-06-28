@@ -40,8 +40,6 @@ import mdesl.graphics.Texture;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GLContext;
 
 /**
  * A very thin wrapper around OpenGL Frame Buffer Objects, intended for
@@ -64,7 +62,7 @@ public class FrameBuffer implements ITexture {
 	protected int depthRenderBufferID;
 	
 	// TODO: Better Exceptions
-	FrameBuffer(Texture texture, boolean ownsTexture) throws Exception {
+	FrameBuffer(Texture texture, boolean ownsTexture, int depthbuffer) throws Exception {
 		this.texture = texture;
 		this.ownsTexture = ownsTexture;
 		depthRenderBufferID = depthbuffer;
@@ -80,13 +78,13 @@ public class FrameBuffer implements ITexture {
 		    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL14.GL_DEPTH_COMPONENT24, texture.getWidth(), texture.getHeight()); // get the data space for it
 		}
 		glBindFramebufferEXT(GL_FRAMEBUFFER, id);
-		glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0_EXT,
-							 	  texture.getTarget(), texture.getID(), 0);
-		int result = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER);
-		if (result!=GL_FRAMEBUFFER_COMPLETE) {
-			glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
-			glDeleteFramebuffers(id);
-			throw new Exception("exception "+result+" when checking FBO status");
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0_EXT, texture.getTarget(), texture.getID(), 0);
+		
+//		int result = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER);
+//		if (result!=GL_FRAMEBUFFER_COMPLETE) {
+//			glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+//			glDeleteFramebuffers(id);
+//			throw new Exception("exception "+result+" when checking FBO status");
 		
 		// initialize depth renderbuffer
         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_RENDERBUFFER_EXT, depthRenderBufferID); // bind it to the renderbuffer
@@ -128,7 +126,7 @@ public class FrameBuffer implements ITexture {
 	 * @throws LWJGLException if the framebuffer was not initialized correctly
 	 */
 	// TODO: Better Exceptions
-	public FrameBuffer(Texture texture) throws Exception {
+	public FrameBuffer(Texture texture, int depthbuffer) throws Exception {
 		this(texture, false, depthbuffer);
 	}
 	

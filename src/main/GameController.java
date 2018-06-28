@@ -12,14 +12,9 @@ import menu.FontRenderer;
 import utility.Window;
 import window.interfaces.IWindow;
 
-<<<<<<< HEAD:src/main/GameController.java
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
-=======
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
->>>>>>> dc75be2321e8bad29bdd7f6fbda930746e60c407:src/main/GameControle.java
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Callback;
@@ -56,10 +51,10 @@ public class GameController implements Runnable, IWindow {
 	public static debug.PerformanceM_GPU performanceGPU;
 	
 	private Window window;
-private FrameBufferHandler fbh;	
 	private static int mapSize = 200;
 	
-<<<<<<< HEAD:src/main/GameController.java
+	private FrameBufferHandler fbh;	
+	
 	private Callback debugProc;
 	
 	// TODO: Set specific exceptions
@@ -137,9 +132,9 @@ private FrameBufferHandler fbh;
 		}
 		catch(Exception ex)
 		{
-			System.out.println("Silent failure!");
+			debug.Debug.println(ex.toString());
 			return;
-			// TODO: No silence
+			// TODO: No silent
 		}
 		
 		lastTime = System.currentTimeMillis();
@@ -259,15 +254,15 @@ private FrameBufferHandler fbh;
 	@Override
 	public void resize(int width, int height) {
 		if(spriteBatch != null) {
-                	spriteBatch.resize(w, h);
+			spriteBatch.resize(width, height);
 		}
                 
-		input.setDispSize(w, h);                
+		input.setDispSize(width, height);                
 		try {
-                                        fbh.resize(w, h);
-                                } catch (LWJGLException e) {
-                                        debug.Debug.printException(e);
-                                }
+			fbh.resize(width, height);
+		} catch (Exception e) {
+			debug.Debug.printException(e);
+		}
 
 	}
 }

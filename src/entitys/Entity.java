@@ -30,8 +30,8 @@ public class Entity {
 	public static float debugStatic = 2;
 	
 	public Entity(int modelID){
-		xPos = (float)(Math.random()-0.5)*main.GameControle.getMapSize();
-		yPos = (float)(Math.random()-0.5)*main.GameControle.getMapSize();
+		xPos = (float)(Math.random()-0.5) * main.GameController.getMapSize();
+		yPos = (float)(Math.random()-0.5) * main.GameController.getMapSize();
 		
 		debug1 = (float)Math.random()*50;
 		debug2 = (float)Math.random()*debugStatic*0.01f;

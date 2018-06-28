@@ -136,13 +136,17 @@ public class Window {
 	}
 
 	public int getWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+		IntBuffer width = IntBuffer.allocate(1);
+		IntBuffer height = IntBuffer.allocate(1);
+		glfwGetWindowSize(window, width, height);
+		return width.get(0);
 	}
 
 	public int getHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		IntBuffer width = IntBuffer.allocate(1);
+		IntBuffer height = IntBuffer.allocate(1);
+		glfwGetWindowSize(window, width, height);
+		return height.get(0);
 	}
 
 	public void setSize(int width, int height) {

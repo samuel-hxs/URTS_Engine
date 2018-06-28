@@ -71,15 +71,15 @@ public class CameraHandler {
 		//Scrolling
 		if(scrolls>0 && scroll){
 			singleScroll(true);
-			scrolls-=main.GameControle.timePassed;
+			scrolls-=main.GameController.timePassed;
 			if(scrolls<0)scrolls = 0;
-			scrollTerminater-=main.GameControle.timePassed;
+			scrollTerminater-=main.GameController.timePassed;
 		}
 		if(scrolls<0 && scroll){
 			singleScroll(false);
-			scrolls+=main.GameControle.timePassed;
+			scrolls+=main.GameController.timePassed;
 			if(scrolls>0)scrolls = 0;
-			scrollTerminater-=main.GameControle.timePassed;
+			scrollTerminater-=main.GameController.timePassed;
 		}
 		
 		if(scroll){
@@ -220,7 +220,7 @@ public class CameraHandler {
 		moveToX = v.x+camera.pos.x;
 		moveToY = v.y+camera.pos.y;
 		
-		float scrollSpeed = 0.003f*main.GameControle.timePassed;
+		float scrollSpeed = 0.003f*main.GameController.timePassed;
 		
 		scrollSpeed += 1;
 		if(up){

@@ -8,22 +8,24 @@ import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+
+import utility.Window;
 
 public class ScreenCapture {
 
 	
 	private static int test;
 	
-	public static void captureScreen(){
+	public static void captureScreen(Window window){
 		test++;
 		if(test != 100)
 			return;
 		
 		GL11.glReadBuffer(GL11.GL_FRONT);
-		int width = Display.getDisplayMode().getWidth();
-		int height= Display.getDisplayMode().getHeight();
+		int width = window.getWidth();
+		int height = window.getHeight();
+		
 		int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
 		ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
 		GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
