@@ -19,7 +19,9 @@ public class Main {
 		boolean err = false;
 		
 		try {
-			// Configuration.DEBUG.set(true);
+			// TODO: Set Configuration.DEBUG_STREAM to point to log
+			Configuration.DEBUG.set(true);
+			Configuration.DEBUG_STREAM.set(debug.Debug.logStream());
 			gc = new GameController();
 			// Using a real thread
 			// TODO: Exception handling

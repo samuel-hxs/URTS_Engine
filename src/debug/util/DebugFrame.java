@@ -2,6 +2,8 @@ package debug.util;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,16 +22,23 @@ public class DebugFrame extends JPanel implements Runnable{
 	private Thread debugThread;
 	
 	private JFrame frame;
+	private final int width = 400;
+	private final int height = 700;
 
 	// TODO: Warum nicht veränderbare größe?
 	// TODO: Standart größe und position anpassen.
-	public DebugFrame(){
+	public DebugFrame() {
 		frame = new JFrame("Seypris Debug");
-		frame.setBounds(100,100,400,700);
+		frame.setBounds(100, 100, width, height);
 		
-		// frame.setResizable(false);
+		frame.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+            	// TODO: Resize DEBUG Window
+            }
+        });
+		frame.setResizable(false);
 		
-		setBounds(0, 0, 800, 600);
+		setBounds(0, 0, width, height);
 		setVisible(true);
 		
 		frame.add(this);
@@ -37,7 +46,7 @@ public class DebugFrame extends JPanel implements Runnable{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		vt = new VisualisedTerminal();
-		vt.setSize(400, 550);
+            	vt.setSize(width, height - 150);
 		
 		debug.Debug.init(vt);
 		debug.Timing.init();

@@ -52,7 +52,7 @@ public class FrameBuffer implements ITexture {
 	// TODO: OpenGL functionality checks with GLFW3
 	public static boolean isSupported() {
 		// return GLContext.getCapabilities().GL_EXT_framebuffer_object;
-		return false;
+		return true;
 	}
 	
 	/** The ID of the FBO in use */

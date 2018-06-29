@@ -1,8 +1,10 @@
 package debug;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import term.TermColors;
@@ -11,6 +13,7 @@ import term.TermPrint;
 public class LogSaver extends Thread implements TermPrint{
 
 	public final String logFilepath;
+	public final String glLogFilepath;
 	private long lastTime;
 	
 	public static final boolean singleLog = false;
@@ -19,22 +22,26 @@ public class LogSaver extends Thread implements TermPrint{
 	
 	private PerformanceMonitor p1, p2, p3;
 	
-	public LogSaver(){
-		if(singleLog){
+	private PrintStream printStream;
+	
+	public LogSaver() {
+		if(singleLog) {
+			glLogFilepath = "log/0-CurrLOG_GL.txt";
 			logFilepath = "log/0-CurrLOG.txt";
-		}else{
-			logFilepath = "log/"+
-					new java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm").format(new java.util.Date (System.currentTimeMillis()))+
-					"-LOG.txt";
+		} else {
+			String date_formatted = new java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm").format(new java.util.Date (System.currentTimeMillis()));
+			logFilepath = "log/" + date_formatted + "-LOG.txt";
+			glLogFilepath = "log/" + date_formatted + "-LOG_GL.txt";
 		}
-		if(!new File("log/").exists())
+		
+		if(!new File("log/").exists()) {
 			new File("log/").mkdir();
+		}
 		
 		PrintWriter writer = null; 
 		try { 
 			writer = new PrintWriter(new FileWriter(logFilepath)); 
-			writer.println("This is the Log of all Console Data: "+
-					new java.text.SimpleDateFormat("dd.MM.yy").format(new java.util.Date (System.currentTimeMillis())));
+			writer.println("This is the Log of all Console Data: " + new java.text.SimpleDateFormat("dd.MM.yy").format(new java.util.Date (System.currentTimeMillis())));
 			writer.println(DIVIDER);
 		} catch (IOException ioe) { 
 			ioe.printStackTrace(); 
@@ -76,8 +83,10 @@ public class LogSaver extends Thread implements TermPrint{
 
 	@Override
 	public void println(String s, int color) {
-		if(s.length()<=0)
+		if(s.length()<=0) {
 			return;
+		}
+		
 		PrintWriter writer = null; 
 		try { 
 			writer = new PrintWriter(new FileWriter(logFilepath, true));
@@ -192,5 +201,37 @@ public class LogSaver extends Thread implements TermPrint{
 		if(p3 != null){
 			p3.print(writer);
 		}
+	}
+
+	public void openPrintStream() {		
+		if(!new File("log/").exists()) {
+			new File("log/").mkdir();
+		}
+		
+		try {
+			printStream = new PrintStream(glLogFilepath);
+			printStream.println("This is the Log of all Console Data: " + new java.text.SimpleDateFormat("dd.MM.yy").format(new java.util.Date (System.currentTimeMillis())));
+			printStream.println(DIVIDER);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally { 
+			if (printStream != null) { 
+				printStream.flush(); 
+			} 
+		}
+	}
+
+	public PrintStream getPrintStream() {
+		if(printStream == null) {
+			openPrintStream();
+		}
+		return printStream;
+	}
+	
+	public void closePrintStream() {
+		if (printStream != null){ 
+			printStream.flush(); 
+			printStream.close(); 
+		} 
 	}
 }
