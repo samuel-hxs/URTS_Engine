@@ -129,7 +129,8 @@ public class Render3D extends SpriteBatch{
 		fbh.startFrame();
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		
-		GL11.glEnable(GL11.GL_ALPHA_TEST);
+		// TODO: For what is this used and how to use it right or replace it?
+		//GL11.glEnable(GL11.GL_ALPHA_TEST);
 		//GL11.glAlphaFunc(GL_GREATER, 0.1f);
 		
 		set3Dmode(true);
@@ -143,7 +144,7 @@ public class Render3D extends SpriteBatch{
 		//updateProjectionView();
 		//vdm.render(this, false, fcf);
 		
-		GL11.glDisable(GL11.GL_ALPHA_TEST);
+		//GL11.glDisable(GL11.GL_ALPHA_TEST);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		

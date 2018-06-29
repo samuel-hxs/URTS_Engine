@@ -2,6 +2,8 @@ package main;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import java.nio.IntBuffer;
+
 import gui.GuiControle;
 import gui.ScreenCapture;
 import logic.CameraHandler;
@@ -14,8 +16,13 @@ import window.interfaces.IWindow;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
-
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL31;
+import org.lwjgl.opengl.GL32;
+import org.lwjgl.opengl.GL33;
+import org.lwjgl.opengl.GL41;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.Callback;
 
@@ -56,6 +63,7 @@ public class GameController implements Runnable, IWindow {
 	private FrameBufferHandler fbh;	
 	
 	private Callback debugProc;
+	private IntBuffer vaos = IntBuffer.allocate(1);
 	
 	// TODO: Set specific exceptions
 	// TODO: Check for GLFW init success befor open ing a window.
@@ -67,6 +75,7 @@ public class GameController implements Runnable, IWindow {
 		GLFW();
 		
 		window = new Window();
+		window.registerListner(this);
 		
 		display = window.getDisplayHandler();
 		input = window.getInputHandler();
@@ -74,6 +83,13 @@ public class GameController implements Runnable, IWindow {
 		// TODO: Abstraction for encapsulation
 		GL.createCapabilities();
 		debugProc = GLUtil.setupDebugMessageCallback(); // may return null if the debug mode is not available
+		
+		if(GL.getCapabilities().OpenGL33) {
+			debug.Debug.println("OpenGL context: Succesfully created");
+		}
+		
+		GL30.glGenVertexArrays(vaos);
+		GL30.glBindVertexArray(vaos.get(0));
 		
 		runtime = Runtime.getRuntime();
 		
@@ -137,8 +153,11 @@ public class GameController implements Runnable, IWindow {
 			// TODO: No silent
 		}
 		
+		// Create and bind generic VAO
+		//GL20.glcrea
+		
 		lastTime = System.currentTimeMillis();
-		while(!input.escPressed || window.isCloseRequested()) {
+		while(!input.escPressed || !window.isCloseRequested()) {
 			performanceS.start();
 			performanceC.start();
 			performanceGPU.start();
@@ -263,6 +282,5 @@ public class GameController implements Runnable, IWindow {
 		} catch (Exception e) {
 			debug.Debug.printException(e);
 		}
-
 	}
 }

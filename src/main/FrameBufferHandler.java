@@ -11,11 +11,11 @@ public class FrameBufferHandler {
 	private FrameBuffer f1;
 	private FrameBuffer f2;
 	
-	public FrameBufferHandler() throws Exception{
+	public FrameBufferHandler() throws Exception {
 		resize(10, 10);
 	}
 	
-	public void resize(int w, int h) throws Exception{
+	public void resize(int w, int h) throws Exception {
 		if(f1 != null){
 			f1.dispose();
 			f2.dispose();

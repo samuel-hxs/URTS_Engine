@@ -39,13 +39,15 @@ import java.nio.FloatBuffer;
 import java.util.List;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 public class VertexArray implements VertexData {
 
 	protected VertexAttrib[] attributes;
 
 	private int totalNumComponents;
-	private int stride;
 	private FloatBuffer buffer;
 	private final int vertCount;
 	
@@ -56,6 +58,7 @@ public class VertexArray implements VertexData {
 	 * @param vertCount the number of VERTICES; e.g. 3 verts to make a triangle, regardless of number of attributes
 	 * @param attributes a list of attributes per vertex
 	 */
+	// TODO: Bind a VAO to use with OpenGL3.3 core context.
 	public VertexArray(int vertCount, VertexAttrib ... attributes) {
 		this.attributes = attributes;
 		for (VertexAttrib a : attributes)
@@ -109,17 +112,17 @@ public class VertexArray implements VertexData {
 		int stride = totalNumComponents * 4;
 		
 		VertexAttrib a;
-		for (int i=0; i<attributes.length; i++) {
+		for (int i = 0; i < attributes.length; i++) {
 			a = attributes[i];
 			buffer.position(offset);
 			glEnableVertexAttribArray(a.location);
-			// TODO: Correct buffer stride size
-			int size = 3;
-			glVertexAttribPointer(a.location, size, a.numComponents, false, stride, buffer);			
+			// TODO: Correct the error: GL_INVALID_OPERATION in glVertexAttribPointer(no array object bound)
+			glVertexAttribPointer(a.location, a.numComponents, GL11.GL_FLOAT, false, stride, buffer);			
 			offset += a.numComponents;
 		}
 	}
 	
+	// TODO: Bind a VAO to use with OpenGL3.3 core context.
 	public void draw(int geom, int first) {
 		main.GameController.performanceGPU.markBUS_done();
 		glDrawArrays(geom, first, count);

@@ -253,8 +253,9 @@ public class SpriteBatch {
 	}
 	
 	public void begin() {
-		if (drawing)
+		if (drawing) {
 			throw new IllegalStateException("must not be drawing before calling begin()");
+		}
 		drawing = true;
 		program.use();
 		data.setCount(0);
@@ -446,7 +447,7 @@ public class SpriteBatch {
 	}
 
 	public void render(VertexData d, Texture t) {
-		if (t != null && t != boundTexture){
+		if (t != null && t != boundTexture) {
 			main.GameController.performanceGPU.markCPU_done();
 			t.bind();
 			main.GameController.performanceGPU.markUNI_done();

@@ -51,6 +51,7 @@ public class FrameBuffer implements ITexture {
 	
 	// TODO: OpenGL functionality checks with GLFW3
 	public static boolean isSupported() {
+		//glfwExtensionSupported();
 		// return GLContext.getCapabilities().GL_EXT_framebuffer_object;
 		return true;
 	}
@@ -70,15 +71,18 @@ public class FrameBuffer implements ITexture {
 			throw new Exception("FBO extension not supported in hardware");
 		}
 		GL11.glEnable(GL11.GL_DEPTH_BUFFER_BIT);
+		// TODO: Fix "GL_INVALID_ENUM in glEnable(GL_ACCUM)" in texture.bind()
 		texture.bind();
 		id = glGenFramebuffersEXT();
+		// GL_INVALID_OPERATION in unsupported function called (unsupported extension or deprecated function?)
+		// GL_INVALID_OPERATION in glRenderbufferStorage(no renderbuffer bound)
 		if(depthRenderBufferID < 0){
-			depthRenderBufferID = glGenRenderbuffersEXT();
-			glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, depthRenderBufferID);                // bind the depth renderbuffer
-		    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL14.GL_DEPTH_COMPONENT24, texture.getWidth(), texture.getHeight()); // get the data space for it
+			depthRenderBufferID = glGenRenderbuffers();
+			glBindRenderbuffer(GL_RENDERBUFFER, depthRenderBufferID);                // bind the depth renderbuffer
+		    glRenderbufferStorageEXT(GL_RENDERBUFFER, GL14.GL_DEPTH_COMPONENT24, texture.getWidth(), texture.getHeight()); // get the data space for it
 		}
-		glBindFramebufferEXT(GL_FRAMEBUFFER, id);
-		glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0_EXT, texture.getTarget(), texture.getID(), 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, id);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.getTarget(), texture.getID(), 0);
 		
 //		int result = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER);
 //		if (result!=GL_FRAMEBUFFER_COMPLETE) {
@@ -87,34 +91,29 @@ public class FrameBuffer implements ITexture {
 //			throw new Exception("exception "+result+" when checking FBO status");
 		
 		// initialize depth renderbuffer
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_RENDERBUFFER_EXT, depthRenderBufferID); // bind it to the renderbuffer
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER, depthRenderBufferID); // bind it to the renderbuffer
 		
-		int framebuffer = EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT); 
+        int framebuffer = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		//int framebuffer = EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT); 
 		switch ( framebuffer ) {
-		    case EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT:
+		    case GL_FRAMEBUFFER_COMPLETE:
 		        break;
-		    case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-		        throw new RuntimeException( "FrameBuffer: " + id
-		                + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT exception" );
-		    case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-		        throw new RuntimeException( "FrameBuffer: " + id
-		                + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT exception" );
-		    case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-		        throw new RuntimeException( "FrameBuffer: " + id
-		                + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT exception" );
-		    case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-		        throw new RuntimeException( "FrameBuffer: " + id
-		                + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT exception" );
-		    case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-		        throw new RuntimeException( "FrameBuffer: " + id
-		                + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT exception" );
-		    case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-		        throw new RuntimeException( "FrameBuffer: " + id
-		                + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT exception" );
-		    default:
+		    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+		        throw new RuntimeException( "FrameBuffer: " + id + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT exception" );
+		    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+		        throw new RuntimeException( "FrameBuffer: " + id + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT exception" );
+		    case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+		        throw new RuntimeException( "FrameBuffer: " + id + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT exception" );
+		    case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+		        throw new RuntimeException( "FrameBuffer: " + id + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT exception" );
+		    case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+		        throw new RuntimeException( "FrameBuffer: " + id + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT exception" );
+		    case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+		        throw new RuntimeException( "FrameBuffer: " + id + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT exception" );
+		   default:
 		        throw new RuntimeException( "Unexpected reply from glCheckFramebufferStatusEXT: " + framebuffer );
 		}
-		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 	
 	/**
@@ -178,10 +177,11 @@ public class FrameBuffer implements ITexture {
 	 * Binds the FBO and sets glViewport to the texture region width/height.
 	 */
 	public void begin() {
-		if (id == 0)
+		if (id == 0) {
 			throw new IllegalStateException("can't use FBO as it has been destroyed..");
+		}
 		glViewport(0, 0, getWidth(), getHeight());
-	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, id);
+	    glBindFramebuffer(GL_FRAMEBUFFER, id);
 		//GL11.glReadBuffer(GL_COLOR_ATTACHMENT0);
 	}
 	
@@ -194,20 +194,23 @@ public class FrameBuffer implements ITexture {
 		}
 		// TODO: resize OpenGL Viewport
 		//glViewport(0, 0, window.getWidth(), window.getHeight());
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 	
 	/**
 	 * Disposes this FBO without destroying the texture.
 	 */
 	public void dispose() {
-		if (id==0)
+		if (id == 0) {
 			return;
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-		glDeleteFramebuffersEXT(id);
+		}
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDeleteFramebuffers(id);
 		glDeleteRenderbuffers(depthRenderBufferID);
-		if (ownsTexture)
+		if (ownsTexture) {
 			texture.dispose();
+		}
 		id = 0;
 		//glReadBuffer(GL_BACK);
 	}

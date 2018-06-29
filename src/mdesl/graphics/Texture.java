@@ -278,6 +278,7 @@ public class Texture implements ITexture {
 		if (!valid()) {
 			throw new IllegalStateException("trying to bind a texture that was disposed");
 		}
+		
 		glBindTexture(getTarget(), id);
 		
 		lastGlobalBind = this;

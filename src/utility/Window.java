@@ -6,10 +6,12 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 import main.DisplayHandler;
+import main.GameController;
 import main.InputHandler;
 import window.interfaces.IWindow;
 
 import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.*;
 
 import java.nio.*;
@@ -20,6 +22,10 @@ public class Window {
 	private InputHandler input;
 	private DisplayHandler display;
 	private long window;
+	
+	// TODO: Make it into an event for loop in gamecontroller instead of sticky flag
+	private boolean wasResiszed;
+	private ArrayList<IWindow> listner = new ArrayList<IWindow>();
 	
 	// TODO: Better throws
 	public Window() throws Exception {		
@@ -34,14 +40,13 @@ public class Window {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Minimum Major version
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // Minimum Minor version
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); // For debugging remove for Release
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // For explicit Core, Removal of depreaced
 
 		// Create the window
-		window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
+		window = glfwCreateWindow(300, 300, "Engine Start", NULL, NULL);
 		if ( window == NULL ) {
 			throw new RuntimeException("Failed to create the GLFW window");
 		}
@@ -58,9 +63,13 @@ public class Window {
 			debug.Debug.println("GLFW error [" + Integer.toHexString(error) + "]: " + GLFWErrorCallback.getDescription(description));
 			//System.err.println("");
 		});
-
-		// easy clean-up
-		//glfwSetErrorCallback(null).free();
+		glfwSetWindowSizeCallback(window, GLFWWindowSizeCallback.create((window, width, height) -> {
+			debug.Debug.println("Window size is now: " + width + "x" + height + "!");
+			wasResiszed = true;
+			for( int i = 0; i < listner.size(); ++i) {
+				listner.get(i).resize(width, height);
+			}
+		}));
 
 		// Get the thread stack and push a new frame
 		try ( MemoryStack stack = stackPush() ) {
@@ -79,7 +88,8 @@ public class Window {
 				(vidmode.width() - pWidth.get(0)) / 2,
 				(vidmode.height() - pHeight.get(0)) / 2
 			);
-		} // the stack frame is popped automaticall
+		} // the stack frame is popped automatically
+		
 	}
 
 	public void close() {
@@ -122,8 +132,11 @@ public class Window {
 	}
 
 	public boolean wasResized() {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = wasResiszed;
+		if(wasResiszed) {
+			wasResiszed = false;
+		}
+		return result;
 	}
 
 	public boolean isCloseRequested() {
@@ -154,7 +167,7 @@ public class Window {
 	}
 
 	public void setFullscreen(boolean fullscreen) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	public DisplayHandler getDisplayHandler() {
@@ -167,5 +180,11 @@ public class Window {
 	
 	public void setCursorPosition(int x, int i) {
 		// TODO Auto-generated method stub	
+	}
+
+	public void registerListner(IWindow window) {
+		if(listner.contains(window) == false) {
+			listner.add(window);
+		}
 	}
 }
